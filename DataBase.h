@@ -6,21 +6,34 @@
 
 #include "sqlite3.h"
 
+struct Recipe
+{
+    std::string name;
+    std::string tags;
+};
+
 class DataBase{
 public:
     DataBase();
     ~DataBase();
-    void insertRecipe(const std::string& _name, const std::string& _tags);
+    const bool insertRecipe(const std::string& _name, const std::string& _tags) const;
     void selectAllRecipe();
     void selectRecipeWithTags(const std::vector<std::string>& _vec);
+    void selectRandomRecipeWithTags(const std::vector<std::string>& _vec) const;
 
 private:
     sqlite3* m_db;
     const std::string FILE_NAME;
-    void setupNewDataBase();
-    const bool executeSQL(const std::string& _sql, int(*callback)(void*, int, char**, char**)) const;
+    inline static int m_recipeID;
 
-    int recipeID;
+    inline static std::vector<Recipe> m_selectedRecipes;
+
+    void setupNewDataBase();
+    void setRecipeID() const;
+
+    const bool executeSQL(const std::string& _sql, int(*callback)(void*, int, char**, char**), void* _data) const;
+    static int getRowsCallback(void *data, int argc, char** argv, char** azColName);
+    static int getRecipesCallback(void *data, int argc, char** argv, char** azColName);
 };
 
 #endif

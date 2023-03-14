@@ -3,19 +3,19 @@
 
 int main(){
     DataBase dataBase;
+    std::vector<std::string> tags;
+    tags.emplace_back("fish");
+    tags.emplace_back("vegetarian");
+    tags.emplace_back("quick");
+    tags.emplace_back("cheap");
+    tags.emplace_back("expensive");
 
-    dataBase.insertRecipe("macka", "macka, enkelt, snabbt");
-    dataBase.insertRecipe("äpple", "frukt, enkelt, snabbt");
-    dataBase.insertRecipe("äPPle", "frukt, enkelt, snabbt");
-    dataBase.insertRecipe("fruktskål", "frukt, lång tid, vegetarisk");
-    dataBase.insertRecipe("Pannkakor", "enkelt, vegetarisk");
-    
+    std::cout << "inserted all recipes" << std::endl;
+    std::vector<std::string> v;
+    v.emplace_back("fish");
 
-    std::vector<std::string> vec;
-    vec.emplace_back("frukt");
-    vec.emplace_back("enkelt");
+    dataBase.selectRandomRecipeWithTags(v);
 
-    dataBase.selectRecipeWithTags(vec);
 
     return 0;
 }
