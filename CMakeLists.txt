@@ -26,21 +26,7 @@ add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES} ${sqlite3_SOURCE_DIR}/sqlite3.c)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE} ${sqlite3_SOURCE_DIR})
 
-if(MSVC)
-  target_compile_options(${PROJECT_NAME} PRIVATE /WX /W4)
-  target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
-  
-  set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
-  set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
-  
-  file(GLOB_RECURSE PROJECT_HEADERS CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/src/*.h")
-  source_group("Header Files" FILES ${PROJECT_HEADERS})
-  target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_HEADERS})
-else()
-  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-unused-variable -Wno-unused-parameter -Wno-unused-but-set-variable)
-  target_link_libraries(${PROJECT_NAME} PRIVATE raylib stdc++fs)
-endif()
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
+target_link_libraries(${PROJECT_NAME} PRIVATE raylib stdc++fs)
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_CURRENT_SOURCE_DIR}/recipe.db $<TARGET_FILE_DIR:${PROJECT_NAME}>/)
+  #compile with: cmake .. -G "MinGW Makefiles" %*  -DCMAKE_C_COMPILER=<gcc> -DCMAKE_CXX_COMPILER=<g++>

@@ -2,8 +2,8 @@
 
 #include <iostream>
 #include <filesystem>
-#include <string>
 #include <algorithm>
+#include <string>
 #include <cctype>
 
 int DataBase::getRecipesCallback(void *data, int argc, char** argv, char** azColName){
@@ -26,9 +26,11 @@ DataBase::DataBase():
     
     std::filesystem::path path{FILE_NAME};
     if(!std::filesystem::exists(path)){
+        std::cout << "Setting upp new databse\n";
         m_recipeID = 0;
         setupNewDataBase();
     }else{
+        std::cout << "Opening database\n";
         sqlite3_open(FILE_NAME.c_str(), &m_db);
         setRecipeID();
     }

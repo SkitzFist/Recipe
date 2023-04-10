@@ -65,6 +65,10 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "*.m": "cpp",
+        "xhash": "cpp",
+        "typeindex": "cpp",
+        "unordered_map": "cpp"
     }
 }
