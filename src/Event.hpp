@@ -3,6 +3,7 @@
 
 class Event{};
 
-class AddRecipeButtonPressed : public Event{};
+class AddRecipePressed : public Event{};
+class GenerateRecipePressed : public Event{};
 
 #endif

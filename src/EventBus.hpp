@@ -26,8 +26,6 @@ public:
 
     template <class EventType>
     void fireEvent(const EventType& event){
-        log("fireEvent, size: " + std::to_string(m_handlers.size()));
-
         if(!eventTypeExists(typeid(EventType))){
             return;
         }
