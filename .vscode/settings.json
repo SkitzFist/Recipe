@@ -70,5 +70,6 @@
         "xhash": "cpp",
         "typeindex": "cpp",
         "unordered_map": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }

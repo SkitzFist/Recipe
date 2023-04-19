@@ -9,11 +9,12 @@ Program::Program(){
     InitWindow(Settings::WIDTH, Settings::HEIGHT, "Recipe");
     SetTargetFPS(60);
     SetExitKey(KEY_ESCAPE);
-    EventBus eventBus;
-    m_state = new StateStart(eventBus);
+    m_eventBus = new EventBus();
+    m_state = new StateStart(m_eventBus);
 }
 
 Program::~Program(){
+    delete m_eventBus;
     delete m_state;
 }
 

@@ -11,7 +11,7 @@ public:
 
 private:
     State* m_state;
-    
+    EventBus* m_eventBus;
     void handleInput();
     void update();
     void render() const;

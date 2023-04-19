@@ -7,6 +7,8 @@
 
 #include "EventHandler.hpp"
 
+#include "Log.hpp"
+
 class EventBus{
 public:
     EventBus(){
@@ -24,18 +26,20 @@ public:
 
     template <class EventType>
     void fireEvent(const EventType& event){
+        log("fireEvent, size: " + std::to_string(m_handlers.size()));
+
         if(!eventTypeExists(typeid(EventType))){
             return;
         }
-
-        std::vector<ID*>* vec = &m_handlers[typeid(EventType)];
         
+        std::vector<ID*>* vec = &m_handlers[typeid(EventType)];
+
         for(std::size_t i = 0; i < vec->size(); ++i){
             ID* handlerID = vec->at(i);
             EventHandler<EventType>* handler = (EventHandler<EventType>*)handlerID;
             handler->onEvent(event);
-        }
     }
+}
 
     template <class EventType>
     void removeHandler(EventHandler<EventType>* handler){
@@ -55,8 +59,7 @@ public:
 private:
 
     bool eventTypeExists(std::type_index typeIndex){
-         auto it = m_handlers.find(typeIndex);
-         return it != m_handlers.end();
+        return m_handlers.find(typeIndex) != m_handlers.end();
     }
 
     std::unordered_map<std::type_index, std::vector<ID*>> m_handlers;
