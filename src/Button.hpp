@@ -13,13 +13,10 @@ public:
         m_pos{0,0},m_size(size), m_text(text), m_eventBus(eventBus), m_isHovering(false){
             fontSize = GetFontDefault().baseSize * 4;
             Vector2 textSize = MeasureTextEx(GetFontDefault(), text, fontSize, 2.f);
-            log("textSize", textSize );
             while (textSize.x >= m_size.x || textSize.y >= m_size.y)
             {
-                
                 fontSize *= 0.95;
                 textSize = MeasureTextEx(GetFontDefault(), text, fontSize, 2.f);
-                log("textSize", textSize );
             }
             
         }

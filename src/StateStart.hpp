@@ -5,17 +5,14 @@
 #include "State.hpp"
 
 
-class StateStart : public State, public EventHandler<AddRecipePressed>, public EventHandler<GenerateRecipePressed>{
+class StateStart : public State{
 public:
 StateStart(EventBus* _eventBus);
 virtual ~StateStart();
 
-virtual State* handleInput() override;
-virtual State* update(float dt) override;
+virtual void handleInput() override;
+virtual void update(float dt) override;
 virtual void render() const override;
-
-virtual void onEvent(const AddRecipePressed& _event) override;
-virtual void onEvent(const GenerateRecipePressed& _event) override;
 
 private:
    State* m_state;

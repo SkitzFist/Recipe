@@ -6,10 +6,7 @@
 #include "Log.hpp"
 
 StateStart::StateStart(EventBus* _eventBus):
-    State(_eventBus), EventHandler<AddRecipePressed>(getNewId()), EventHandler<GenerateRecipePressed>(getNewId()), m_state(this){
-
-    m_eventBus->registerHandler<AddRecipePressed>(this);
-    m_eventBus->registerHandler<GenerateRecipePressed>(this);
+    State(_eventBus), m_state(this){
 
     Button<AddRecipePressed>* addRecipeButton = new Button<AddRecipePressed>({250,50}, _eventBus, "Add Recipe");
     addRecipeButton->setPos(Vector2{
@@ -37,7 +34,7 @@ StateStart::~StateStart(){
     }
 }
 
-State* StateStart::handleInput(){
+void StateStart::handleInput(){
     
     if(m_hoveredUiElement){
         m_hoveredUiElement->onHover(isColliding(GetMousePosition(), m_hoveredUiElement->getPos(), m_hoveredUiElement->getSize()));
@@ -54,11 +51,10 @@ State* StateStart::handleInput(){
         }
     }
        
-    return m_state;
 }
 
-State* StateStart::update(float dt){
-    return m_state;
+void StateStart::update(float dt){
+    
 }
 
 void StateStart::render() const{
@@ -70,12 +66,4 @@ void StateStart::render() const{
     for(std::size_t i = 0; i < m_uiElements.size(); ++i){
         m_uiElements[i]->render();    
     }
-}
-
-void StateStart::onEvent(const AddRecipePressed& _event){
-    log("Switch state to addRecipe");
-}
-
-void StateStart::onEvent(const GenerateRecipePressed& _event){
-    log("Switch state to generateRecipe");
 }
