@@ -1,22 +1,42 @@
 #include "StateSwitcher.hpp"
 
 #include "StateStart.hpp"
+#include "StateAddRecipe.hpp"
 
 StateSwitcher::StateSwitcher(EventBus* eventBus) :
-    EventHandler<GenerateRecipePressed>(getNewId()), EventHandler<AddRecipePressed>(getNewId()){
+    EventHandler<SwitchStateToGenerateRecipe>(getNewId()), EventHandler<SwitchStateToAddRecipe>(getNewId()),
+    EventHandler<SwitchStateToMainMenu>(getNewId()){
     
-    m_state = new StateStart(eventBus);
+    eventBus->registerHandler<SwitchStateToAddRecipe>(this);
+    eventBus->registerHandler<SwitchStateToGenerateRecipe>(this);
+    eventBus->registerHandler<SwitchStateToMainMenu>(this);
 
+    m_mainMenu = new StateStart(eventBus);
+    m_addRecipe = new StateAddRecipe(eventBus);
+
+    m_currentState = m_addRecipe;
+
+}
+
+StateSwitcher::~StateSwitcher(){
+    m_currentState = nullptr;
+    delete m_mainMenu;
+    delete m_addRecipe;
+    delete m_generateRecipe;
 }
 
 State* StateSwitcher::getCurrentState() const{
-    return m_state;
+    return m_currentState;
 }
 
-void StateSwitcher::onEvent(const GenerateRecipePressed& event){
-
+void StateSwitcher::onEvent(const SwitchStateToGenerateRecipe& event){
+    m_currentState = m_generateRecipe;
 }
 
-void StateSwitcher::onEvent(const AddRecipePressed& event){
+void StateSwitcher::onEvent(const SwitchStateToAddRecipe& event){
+    m_currentState = m_addRecipe;
+}
 
+void StateSwitcher::onEvent(const SwitchStateToMainMenu& event){
+    m_currentState = m_mainMenu;
 }

@@ -8,14 +8,14 @@
 StateStart::StateStart(EventBus* _eventBus):
     State(_eventBus), m_state(this){
 
-    Button<AddRecipePressed>* addRecipeButton = new Button<AddRecipePressed>({250,50}, _eventBus, "Add Recipe");
+    Button<SwitchStateToAddRecipe>* addRecipeButton = new Button<SwitchStateToAddRecipe>({250,50}, _eventBus, "Add Recipe");
     addRecipeButton->setPos(Vector2{
             (Settings::WIDTH / 2) - (addRecipeButton->getSize().x/2),
             ((int)(Settings::HEIGHT * 0.75)) - (addRecipeButton->getSize().y / 2)
         });
 
 
-    Button<GenerateRecipePressed>* generateRecipeButton = new Button<GenerateRecipePressed>({250,50}, _eventBus, "Generate recipe");
+    Button<SwitchStateToGenerateRecipe>* generateRecipeButton = new Button<SwitchStateToGenerateRecipe>({250,50}, _eventBus, "Generate recipe");
     generateRecipeButton->setPos(Vector2{
             addRecipeButton->getPos().x, 
             addRecipeButton->getPos().y - 100.f

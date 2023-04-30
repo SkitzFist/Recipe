@@ -3,7 +3,6 @@
 #ifndef _State
 #define _State
 
-
 class State{
 public:
     State(EventBus* _eventBus):m_eventBus(_eventBus){}

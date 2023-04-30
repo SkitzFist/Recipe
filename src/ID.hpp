@@ -9,8 +9,7 @@ struct ID
     }
 };
 
-
-static int getNewId(){
+static const int getNewId(){
     static int counter = 0;
     return counter++;
 }

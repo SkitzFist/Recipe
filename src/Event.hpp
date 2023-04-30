@@ -3,7 +3,8 @@
 
 class Event{};
 
-class AddRecipePressed : public Event{};
-class GenerateRecipePressed : public Event{};
+class SwitchStateToAddRecipe : public Event{};
+class SwitchStateToGenerateRecipe : public Event{};
+class SwitchStateToMainMenu : public Event{};
 
 #endif
