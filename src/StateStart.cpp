@@ -6,7 +6,7 @@
 #include "Log.hpp"
 
 StateStart::StateStart(EventBus* _eventBus):
-    State(_eventBus), m_state(this){
+    State(_eventBus){
 
     Button<SwitchStateToAddRecipe>* addRecipeButton = new Button<SwitchStateToAddRecipe>({250,50}, _eventBus, "Add Recipe");
     addRecipeButton->setPos(Vector2{

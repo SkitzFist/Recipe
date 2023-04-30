@@ -27,8 +27,8 @@ public:
     void onBlur();
 
 private:
-    Vector2 m_size;
     Vector2 m_pos;
+    Vector2 m_size;
 
     std::string m_text;
     int m_fontSize;
@@ -47,8 +47,8 @@ private:
 
     const float REMOVAL_COOLDOWN_START;
     float m_removalTimer;
-    float m_removalElapsed;
     bool m_removalInProgress;
+    float m_removalElapsed;
     bool canRemoveBackwards()const;
     void handleRemoveBackward();
 

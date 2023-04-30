@@ -6,8 +6,8 @@
 
 InputField::InputField(Vector2 pos, Vector2 size):
     m_pos(pos), m_size(size), m_text(""), BLINK_TIME(1.0f), m_blinkTimer(0.0f), m_carrotVisible(false),
-    REMOVAL_COOLDOWN_START(0.2f), m_removalTimer(0.f), m_removalInProgress(false), m_removalElapsed(0.0f),
-    m_carrotPos(0), m_markTextInProgress(false), m_markTextStartPos{0.f,0.f}, m_markTextIndexes{0,0}{
+    m_carrotPos(0), REMOVAL_COOLDOWN_START(0.2f), m_removalTimer(0.f), m_removalInProgress(false), m_removalElapsed(0.0f),
+    m_markTextInProgress(false), m_markTextStartPos{0.f,0.f}, m_markTextIndexes{0,0}{
 
     m_fontSize = GetFontDefault().baseSize * 4;
     m_textMarkerBox.size.y = MeasureTextEx(GetFontDefault(), "A", m_fontSize, 2.f).y;

@@ -15,7 +15,6 @@ virtual void update(float dt) override;
 virtual void render() const override;
 
 private:
-   State* m_state;
    std::vector<UiElement*> m_uiElements;
    UiElement* m_hoveredUiElement;
 };
