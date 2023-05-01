@@ -1,7 +1,7 @@
 #ifndef _StateStart
 #define _StateStart
 
-#include "UiElement.hpp"
+#include "UiButton.hpp"
 #include "State.hpp"
 
 
@@ -15,8 +15,7 @@ virtual void update(float dt) override;
 virtual void render() const override;
 
 private:
-   std::vector<UiElement*> m_uiElements;
-   UiElement* m_hoveredUiElement;
+   std::vector<UiButton*> m_uiElements;
 };
 
 #endif

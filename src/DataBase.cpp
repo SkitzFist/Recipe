@@ -21,7 +21,7 @@ int DataBase::getRowsCallback(void *data, int argc, char** argv, char** azColNam
     return 0;
 }
 
-DataBase::DataBase():
+DataBase::DataBase(EventBus* eventBus):
     FILE_NAME("recipe.db"){
     
     std::filesystem::path path{FILE_NAME};

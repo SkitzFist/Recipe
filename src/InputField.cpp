@@ -4,12 +4,12 @@
 #include "Collision.h"
 #include <cstring>
 
-InputField::InputField(Vector2 pos, Vector2 size):
-    m_pos(pos), m_size(size), m_text(""), BLINK_TIME(1.0f), m_blinkTimer(0.0f), m_carrotVisible(false),
+InputField::InputField(Vector2 size):
+    m_pos{0.f,0.f}, m_size(size), m_isFocused(false), m_text(""), BLINK_TIME(1.0f), m_blinkTimer(0.0f), m_carrotVisible(false),
     m_carrotPos(0), REMOVAL_COOLDOWN_START(0.2f), m_removalTimer(0.f), m_removalInProgress(false), m_removalElapsed(0.0f),
     m_markTextInProgress(false), m_markTextStartPos{0.f,0.f}, m_markTextIndexes{0,0}{
 
-    m_fontSize = GetFontDefault().baseSize * 4;
+    m_fontSize = GetFontDefault().baseSize * static_cast<int>(m_size.y * 0.08f);
     m_textMarkerBox.size.y = MeasureTextEx(GetFontDefault(), "A", m_fontSize, 2.f).y;
     m_textMarkerBox.pos.y = (m_pos.y + (m_size.y / 2.)) - (m_textMarkerBox.size.y / 2.f);
 }
@@ -19,18 +19,31 @@ InputField::~InputField(){
 }
 
 void InputField::handleInput(){
+
+    if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+        if(isColliding(GetMousePosition(), m_pos, m_size)){
+            onFocus();
+        }else{
+            onBlur();
+        }
+    }
+
     handleCarrotOffset();
     handleTextInput();
     handleRemoveBackward();
     handleMarkText();
 
-    if(IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_V)){
+    if(IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_V) && m_isFocused){
         m_text.insert(m_carrotPos, GetClipboardText());
         m_carrotPos += std::strlen(GetClipboardText());
     }
 }
 
 void InputField::handleCarrotOffset(){
+    if(!m_isFocused){
+        return;
+    }
+
     size_t offset = 0;
     if(IsKeyPressed(KEY_LEFT)){
         offset -= 1;
@@ -57,33 +70,66 @@ const bool InputField::canMoveCarrot(int pos) const{
 }
 
 void InputField::handleTextInput(){
+    if(!m_isFocused){
+        return;
+    }
+
     int unicode = GetCharPressed();
     if(unicode > 0){
         removeCarrot();
     }
+    
     while (unicode > 0)
     {  
-        char code[2];
-        code[0] = (char)unicode;
-        code[1] = '\0';
+        char code[4];
+        if (unicode == 0xC4) { // Ä
+            strcpy(code, "Ä");
+        } else if (unicode == 0xE4) { // ä
+            strcpy(code, "ä");
+        } else if (unicode == 0xD6) { // Ö
+            strcpy(code, "Ö");
+        } else if (unicode == 0xF6) { // ö
+            strcpy(code, "ö");
+        } else if (unicode == 0xC5) { // Å
+            strcpy(code, "Å");
+        } else if (unicode == 0xE5) { // å
+            strcpy(code, "å");
+        } else {
+            code[0] = (char)unicode;
+            code[1] = '\0';
+        }
         m_text.insert(m_carrotPos, code);
-        m_carrotPos += 1;
+
+        m_carrotPos += strlen(code); // increase by length of code instead of 1
         unicode = GetCharPressed();
     }
 }
 
+bool isSpecialCase(const std::string& str){
+    return (str == "ö" || str == "Ö" || str == "ä" || str == "Ä" || str == "å" || str == "Å");
+}
+
 void InputField::handleRemoveBackward(){
+    if(!m_isFocused){
+        return;
+    }
 
     if(IsKeyPressed(KEY_BACKSPACE)){
         m_removalInProgress = true;
         removeCarrot();
     }
 
-    while (canRemoveBackwards())
-    {
-        m_text.erase(m_carrotPos -1, 1);
+    while (IsKeyDown(KEY_BACKSPACE) && canRemoveBackwards())
+    {   
+        if(isSpecialCase(m_text)){
+            m_text.clear();
+            m_carrotPos = 0;
+        }else{
+            int erase = (m_carrotPos -2 > 0) && isSpecialCase(m_text.substr(m_carrotPos -2, 2)) ? 2 : 1;
+            m_text.erase(m_carrotPos - erase, erase);
+            m_carrotPos -= erase;
+        }
         m_removalTimer = REMOVAL_COOLDOWN_START / (m_removalElapsed + 1.f);
-        m_carrotPos -= 1;
     }
     
     if(IsKeyReleased(KEY_BACKSPACE)){
@@ -93,7 +139,8 @@ void InputField::handleRemoveBackward(){
 }
 
 bool InputField::canRemoveBackwards() const{
-    return IsKeyDown(KEY_BACKSPACE) && !m_text.empty() && m_removalTimer < 0.f && m_removalInProgress && m_carrotPos != 0;
+    return !m_text.empty() && m_removalTimer < 0.f && 
+           m_removalInProgress && m_carrotPos != 0 && m_isFocused;
 }
 
 void InputField::handleMarkText(){
@@ -115,6 +162,11 @@ void InputField::handleMarkText(){
     }
 
     if(IsMouseButtonReleased(MOUSE_LEFT_BUTTON)){
+
+        if(!m_markTextInProgress){
+            return;
+        }
+
         m_markTextInProgress = false;
 
         Vector2 textSize = MeasureTextEx(GetFontDefault(), m_text.c_str(), m_fontSize, 2.f);
@@ -158,16 +210,16 @@ void InputField::handleMarkText(){
 
         if(m_markTextStartPos.x < mousePos.x){
            m_textMarkerBox.pos.x = m_markTextStartPos.x;
-           if(m_textMarkerBox.pos.x > (m_pos.x + m_size.x)){
-                m_textMarkerBox.pos.x = m_pos.x + m_size.x;
-           }
            m_textMarkerBox.size.x = mousePos.x - m_markTextStartPos.x;
+           if((m_textMarkerBox.pos.x + m_textMarkerBox.size.x) > (m_pos.x + m_size.x)){
+            m_textMarkerBox.size.x = (m_pos.x + m_size.x) - m_textMarkerBox.pos.x;
+        }
         }else{
             m_textMarkerBox.pos.x = mousePos.x;
             if(m_textMarkerBox.pos.x < m_pos.x){
                 m_textMarkerBox.pos.x = m_pos.x;
             }
-            m_textMarkerBox.size.x = m_markTextStartPos.x - mousePos.x;
+            m_textMarkerBox.size.x = m_markTextStartPos.x - m_textMarkerBox.pos.x;
         }
     }
 }
@@ -181,7 +233,7 @@ void InputField::clearMarkText(){
 }
 
 void InputField::update(float dt){
-    if(!m_removalInProgress){
+    if(!m_removalInProgress && m_isFocused){
         updateCarrot(dt);   
     }
 
@@ -221,25 +273,36 @@ void InputField::removeCarrot(){
 
 void InputField::render() const{
     DrawRectangle(m_pos.x, m_pos.y, m_size.x, m_size.y, RAYWHITE);
-
-
-    DrawRectangle(m_textMarkerBox.pos.x, m_textMarkerBox.pos.y, m_textMarkerBox.size.x, m_textMarkerBox.size.y, BLUE);
-
-    Font font = GetFontDefault();
-    float posX = (m_pos.x + 2.f);
-    float posY = (m_pos.y + (m_size.y/2.f)) - (MeasureTextEx(font, m_text.c_str(), m_fontSize, 2.0).y/2.f);
-    DrawTextEx(font, m_text.c_str(), Vector2{posX, posY}, m_fontSize, 2.0, BLACK);
+    DrawRectangle(m_textMarkerBox.pos.x, getTextPos().y, m_textMarkerBox.size.x, m_textMarkerBox.size.y, BLUE);
+    DrawTextEx(GetFontDefault(), m_text.c_str(), getTextPos(), m_fontSize, 2.0, DARKGRAY);
 }
 
 void InputField::onFocus(){
     m_blinkTimer = BLINK_TIME;
+    m_isFocused = true;
+}
+
+const bool InputField::isFocused() const{
+    return m_isFocused;
 }
 
 void InputField::onBlur(){
-
+    m_isFocused = false;
 }
 
-Vector2 InputField::getTextPos(){
+Vector2 InputField::getTextPos() const{
     Vector2 textSize = MeasureTextEx(GetFontDefault(), m_text.c_str(), m_fontSize, 2.f);
-    return {m_pos.x + 2.f, (m_pos.y + (m_size.y/2.f)) - (textSize.y/2.f)};
+    return Vector2{m_pos.x + 2.f, (m_pos.y + (m_size.y/2.f)) - (textSize.y/2.f)};
+}
+
+const Vector2 InputField::getPos() const{
+    return m_pos;
+}
+
+void InputField::setPos(Vector2 pos){
+    m_pos = pos;
+}
+
+const Vector2 InputField::getSize() const{
+    return m_size;
 }

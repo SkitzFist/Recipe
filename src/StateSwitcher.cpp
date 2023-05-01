@@ -14,7 +14,7 @@ StateSwitcher::StateSwitcher(EventBus* eventBus) :
     m_mainMenu = new StateStart(eventBus);
     m_addRecipe = new StateAddRecipe(eventBus);
 
-    m_currentState = m_addRecipe;
+    m_currentState = m_mainMenu;
 
 }
 

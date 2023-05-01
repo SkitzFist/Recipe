@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "EventBus.hpp"
+
 #include "sqlite3.h"
 
 struct Recipe
@@ -14,7 +16,7 @@ struct Recipe
 
 class DataBase{
 public:
-    DataBase();
+    DataBase(EventBus* eventBus);
     ~DataBase();
     bool insertRecipe(const std::string& _name, const std::string& _tags) const;
     void selectAllRecipe();

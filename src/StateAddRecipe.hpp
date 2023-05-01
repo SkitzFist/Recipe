@@ -3,6 +3,19 @@
 
 #include "State.hpp"
 #include "InputField.hpp"
+#include "UiButton.hpp"
+
+struct InputGroup
+{
+    std::string text = "";
+    InputField* inputField = nullptr;
+
+    InputGroup(const std::string& _text, InputField*_inputField){
+        text = _text;
+        inputField = _inputField;
+    }
+};
+
 
 class StateAddRecipe : public State{
 public:
@@ -14,8 +27,8 @@ public:
     virtual void render() const override;
 
 private:
-    InputField* m_input;
-
+    std::vector<InputGroup> m_inputGroups;
+    std::vector<UiButton*> m_buttons;
 };
 
 #endif

@@ -1,13 +1,12 @@
 #ifndef _Button
 #define _Button
 
-
 #include "EventBus.hpp"
-
-#include "UiElement.hpp"
+#include "UiButton.hpp"
+#include "Collision.h"
 
 template <class EventType>
-class Button : public UiElement{
+class Button : public UiButton{
 public:
     Button(Vector2 size, EventBus* eventBus, const char* text):
         m_pos{0,0},m_size(size), m_text(text), m_eventBus(eventBus), m_isHovering(false){
@@ -23,16 +22,17 @@ public:
 
     virtual ~Button()override{}
 
-    void setPos(Vector2 pos){
-        m_pos = pos;
-    }
+    virtual void handleInput() override{
+        Vector2 mousePos = GetMousePosition();
 
-    virtual inline void onHover(bool isHovering) override{
-        m_isHovering = isHovering;
-    }
-
-    virtual inline void onMouseReleased() override {
-        m_eventBus->fireEvent(EventType());
+        if(isColliding(mousePos, m_pos, m_size)){
+            m_isHovering = true;
+            if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+                m_eventBus->fireEvent(EventType());
+            }
+        }else{
+            m_isHovering = false;
+        }
     }
 
     virtual void render() const override{
@@ -42,7 +42,7 @@ public:
                 m_pos.x - ((borderSize.x - m_size.x)/2.f),
                 m_pos.y - ((borderSize.y - m_size.y)/2.f)
             };
-            DrawRectangle(borderPos.x, borderPos.y, borderSize.x, borderSize.y, GREEN);
+            DrawRectangle(borderPos.x, borderPos.y, borderSize.x, borderSize.y, ORANGE);
             
         }
 
@@ -50,11 +50,12 @@ public:
         Font font = GetFontDefault();
         float posX = (m_pos.x + (m_size.x/2.f)) - (MeasureTextEx(font, m_text, fontSize, 2.0).x/2.f);
         float posY = (m_pos.y + (m_size.y/2.f)) - (MeasureTextEx(font, m_text, fontSize, 2.0).y/2.f);
-        DrawTextEx(font, m_text, Vector2{posX, posY}, fontSize, 2.0, RED);
+        DrawTextEx(font, m_text, Vector2{posX, posY}, fontSize, 2.0, DARKGRAY);
     }
 
     virtual const Vector2& getSize() const override { return m_size; }
     virtual const Vector2& getPos() const override { return m_pos; }
+    void setPos(Vector2 pos){ m_pos = pos; }
 
 private:
     float fontSize;

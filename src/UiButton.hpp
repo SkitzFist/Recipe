@@ -3,13 +3,12 @@
 
 #include "raylib.h"
 
-class UiElement{
+class UiButton{
 public:
-    virtual ~UiElement(){}
+    virtual ~UiButton(){}
     virtual const Vector2& getSize() const = 0;
     virtual const Vector2& getPos() const = 0;
-    virtual void onHover(bool isHovering) = 0;
-    virtual void onMouseReleased() = 0;
+    virtual void handleInput() = 0;
     virtual void render() const = 0;
 
 private:

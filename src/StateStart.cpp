@@ -23,32 +23,18 @@ StateStart::StateStart(EventBus* _eventBus):
 
     m_uiElements.emplace_back(addRecipeButton);
     m_uiElements.emplace_back(generateRecipeButton);
-
-    m_hoveredUiElement = nullptr;
-    
 }
 
 StateStart::~StateStart(){
-    for(int i = 0; i < m_uiElements.size(); ++i){
+    for(std::size_t i = 0; i < m_uiElements.size(); ++i){
         delete m_uiElements[i];
     }
 }
 
 void StateStart::handleInput(){
     
-    if(m_hoveredUiElement){
-        m_hoveredUiElement->onHover(isColliding(GetMousePosition(), m_hoveredUiElement->getPos(), m_hoveredUiElement->getSize()));
-    }
-
-    for(std::size_t i = 0; i < m_uiElements.size(); ++i){
-        if(isColliding(GetMousePosition(), m_uiElements[i]->getPos(), m_uiElements[i]->getSize())){
-            m_uiElements[i]->onHover(true);
-            m_hoveredUiElement = m_uiElements[i];
-
-            if(IsMouseButtonReleased(MOUSE_LEFT_BUTTON)){
-                m_uiElements[i]->onMouseReleased();
-            }
-        }
+    for(UiButton* button : m_uiElements){
+        button->handleInput();
     }
        
 }
@@ -59,11 +45,11 @@ void StateStart::update(float dt){
 
 void StateStart::render() const{
     const char* title = "Recept generator";
-    int fontSize = 20;
+    int fontSize = 32;
     int width = MeasureText(title, fontSize) / 2;
-    DrawText(title, Settings::WIDTH/2 - width, 5, fontSize, RAYWHITE);
+    DrawTextEx(GetFontDefault(), title, Vector2{Settings::WIDTH/2.f - width, 5.f}, fontSize, 2.f,DARKGRAY);
 
-    for(std::size_t i = 0; i < m_uiElements.size(); ++i){
-        m_uiElements[i]->render();    
+    for(UiButton* button : m_uiElements){
+        button->render();
     }
 }

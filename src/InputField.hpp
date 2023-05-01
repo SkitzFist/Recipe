@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "UiElement.hpp"
+#include "raylib.h"
 
 typedef struct Vector2i{ //todo, move this
     int x;
@@ -17,23 +17,29 @@ struct TextMarkerBox{
 
 class InputField{
 public:
-    InputField(Vector2 pos, Vector2 size);
+    InputField(Vector2 size);
     ~InputField();
     void handleInput();
     void update(float dt);
     void render() const;
 
     void onFocus();
+    const bool isFocused() const;
     void onBlur();
+
+    const Vector2 getPos() const;
+    void setPos(Vector2 pos);
+    const Vector2 getSize() const;
 
 private:
     Vector2 m_pos;
     Vector2 m_size;
+    bool m_isFocused;
 
     std::string m_text;
     int m_fontSize;
     void handleTextInput();
-    Vector2 getTextPos();
+    Vector2 getTextPos() const;
     
     const float BLINK_TIME;
     float m_blinkTimer;

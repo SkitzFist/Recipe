@@ -19,12 +19,20 @@ endif()
 
 # Adding our source files
 file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
-set(PROJECT_INCLUDE "${CMAKE_CURRENT_LIST_DIR}/src/") 
+set(PROJECT_INCLUDE "${CMAKE_CURRENT_LIST_DIR}/src/")
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/assets)
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/font.ttf
+    ${CMAKE_CURRENT_BINARY_DIR}/assets/font.ttf
+    COPYONLY
+)
 
 # Declaring our executable
 add_executable(${PROJECT_NAME})
-target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES} ${sqlite3_SOURCE_DIR}/sqlite3.c)
-target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE} ${sqlite3_SOURCE_DIR})
+target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES} ${sqlite3_SOURCE_DIR}/sqlite3.c ${CMAKE_CURRENT_BINARY_DIR}/assets/font.ttf)
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE} ${sqlite3_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/assets)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib stdc++fs)

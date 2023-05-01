@@ -5,17 +5,17 @@
 
 #include "raylib.h"
 
-Program::Program(){
+Program::Program(EventBus* eventBus){
     InitWindow(Settings::WIDTH, Settings::HEIGHT, "Recipe");
+    SetWindowPosition(GetScreenWidth(), 25.f);
     SetTargetFPS(60);
     SetExitKey(KEY_ESCAPE);
-    m_eventBus = new EventBus();
-    m_stateSwitcher = new StateSwitcher(m_eventBus);
+    m_stateSwitcher = new StateSwitcher(eventBus);
+    Settings::loadFont();
 }
 
 Program::~Program(){
     delete m_stateSwitcher;
-    delete m_eventBus;
 }
 
 void Program::run(){
