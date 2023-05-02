@@ -288,6 +288,7 @@ const bool InputField::isFocused() const{
 
 void InputField::onBlur(){
     m_isFocused = false;
+    removeCarrot();
 }
 
 Vector2 InputField::getTextPos() const{

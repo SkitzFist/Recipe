@@ -7,6 +7,7 @@ class SwitchStateToAddRecipe : public Event{};
 class SwitchStateToGenerateRecipe : public Event{};
 class SwitchStateToMainMenu : public Event{};
 
+class PrepareAddRecipe : public Event{};
 class AddRecipe : public Event{};
 
 #endif

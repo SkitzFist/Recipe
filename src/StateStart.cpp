@@ -8,21 +8,10 @@
 StateStart::StateStart(EventBus* _eventBus):
     State(_eventBus){
 
-    Button<SwitchStateToAddRecipe>* addRecipeButton = new Button<SwitchStateToAddRecipe>({250,50}, _eventBus, "Add Recipe");
-    addRecipeButton->setPos(Vector2{
-            (Settings::WIDTH / 2) - (addRecipeButton->getSize().x/2),
-            ((int)(Settings::HEIGHT * 0.75)) - (addRecipeButton->getSize().y / 2)
-        });
-
-
     Button<SwitchStateToGenerateRecipe>* generateRecipeButton = new Button<SwitchStateToGenerateRecipe>({250,50}, _eventBus, "Generate recipe");
-    generateRecipeButton->setPos(Vector2{
-            addRecipeButton->getPos().x, 
-            addRecipeButton->getPos().y - 100.f
-        });
-
-    m_uiElements.emplace_back(addRecipeButton);
+    Button<SwitchStateToAddRecipe>* addRecipeButton = new Button<SwitchStateToAddRecipe>({250,50}, _eventBus, "Add Recipe");
     m_uiElements.emplace_back(generateRecipeButton);
+    m_uiElements.emplace_back(addRecipeButton);
 }
 
 StateStart::~StateStart(){
@@ -44,12 +33,20 @@ void StateStart::update(float dt){
 }
 
 void StateStart::render() const{
-    const char* title = "Recept generator";
+    const char* title = "Recept";
     int fontSize = 32;
     int width = MeasureText(title, fontSize) / 2;
     DrawTextEx(GetFontDefault(), title, Vector2{Settings::WIDTH/2.f - width, 5.f}, fontSize, 2.f,DARKGRAY);
 
+
+    float buttonYSpacing = m_uiElements[0]->getSize().y * 1.5f;
+    float nextYPos = (Settings::HEIGHT / 2.f) - buttonYSpacing;
+    float nextXPos = (Settings::WIDTH / 2.f) - (m_uiElements[0]->getSize().x / 2.f);
+    
     for(UiButton* button : m_uiElements){
+        button->setPos(nextXPos, nextYPos);
         button->render();
+
+        nextYPos += buttonYSpacing;
     }
 }

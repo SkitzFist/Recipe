@@ -36,17 +36,22 @@ public:
     }
 
     virtual void render() const override{
+        float roundness = 0.9f;
+        int segments = 10;
         if(m_isHovering){
-            Vector2 borderSize = Vector2{m_size.x * 1.025f, m_size.y * 1.1f};
+            Vector2 borderSize = Vector2{m_size.x * 1.025f, m_size.y * 1.15f};
             Vector2 borderPos = Vector2{
                 m_pos.x - ((borderSize.x - m_size.x)/2.f),
                 m_pos.y - ((borderSize.y - m_size.y)/2.f)
             };
-            DrawRectangle(borderPos.x, borderPos.y, borderSize.x, borderSize.y, ORANGE);
+            Rectangle rec = {borderPos.x, borderPos.y, borderSize.x, borderSize.y};
+            DrawRectangleRounded(rec, roundness, segments, ORANGE);
             
         }
 
-        DrawRectangle(m_pos.x, m_pos.y, m_size.x, m_size.y, RAYWHITE);
+        Rectangle rec = {m_pos.x, m_pos.y, m_size.x, m_size.y};
+
+        DrawRectangleRounded(rec, roundness, segments, RAYWHITE);
         Font font = GetFontDefault();
         float posX = (m_pos.x + (m_size.x/2.f)) - (MeasureTextEx(font, m_text, fontSize, 2.0).x/2.f);
         float posY = (m_pos.y + (m_size.y/2.f)) - (MeasureTextEx(font, m_text, fontSize, 2.0).y/2.f);
@@ -55,7 +60,7 @@ public:
 
     virtual const Vector2& getSize() const override { return m_size; }
     virtual const Vector2& getPos() const override { return m_pos; }
-    void setPos(Vector2 pos){ m_pos = pos; }
+    virtual void setPos(Vector2 pos) override { m_pos = pos; }
 
 private:
     float fontSize;
