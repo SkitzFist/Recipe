@@ -4,7 +4,7 @@
 #include "Button.hpp"
 
 StateAddRecipe::StateAddRecipe(EventBus* eventBus):
-    State(eventBus){
+    State(eventBus), EventHandler<PrepareAddRecipe>(getNewId()){
 
     Vector2 inputSize = {Settings::WIDTH * 0.75f, Settings::HEIGHT * 0.025};
     m_inputGroups.emplace_back(InputGroup("Name", new InputField(inputSize)));
@@ -18,6 +18,8 @@ StateAddRecipe::StateAddRecipe(EventBus* eventBus):
 
     m_buttons.emplace_back(backButton);
     m_buttons.emplace_back(addRecipeButton);
+
+    eventBus->registerHandler<PrepareAddRecipe>(this);
 }
 
 StateAddRecipe::~StateAddRecipe(){
@@ -43,9 +45,7 @@ void StateAddRecipe::handleInput(){
         int index = -1;
         for(int i = 0; i < m_inputGroups.size(); ++i){
             if(m_inputGroups[i].inputField->isFocused()){
-                log("focused");
                 index = i;
-                log("index: " + std::to_string(index));
                 break;
             }
         }
@@ -55,7 +55,6 @@ void StateAddRecipe::handleInput(){
         }else{
             m_inputGroups[index].inputField->onBlur();
             index = (index + 1) % (m_inputGroups.size());
-            log("index %: " + std::to_string(index));
             m_inputGroups[index].inputField->onFocus();
         }
        
@@ -95,4 +94,39 @@ void StateAddRecipe::render() const{
         button->render();
         xPos += button->getSize().x + buttonSpacing;
     }
+}
+
+void StateAddRecipe::onEvent(const PrepareAddRecipe& event){
+    std::vector<std::string> dataBaseEntry;
+    for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
+        std::string str = m_inputGroups[i].inputField->getText();
+        
+        if(!validEntry(str)){
+            log("Not valid entry: " + m_inputGroups[i].text);
+            return;
+        }
+        dataBaseEntry.emplace_back(str);
+    }
+
+    for(int i = 0; i < dataBaseEntry.size(); ++i){
+        log(std::to_string(i) + ": " + dataBaseEntry[i]);
+    }
+
+    for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
+        m_inputGroups[i].inputField->clear();
+    }
+
+    m_eventBus->fireEvent(AddRecipe(dataBaseEntry));
+}
+
+const bool StateAddRecipe::validEntry(const std::string& str) const{
+    if(str.empty()){
+        return false;
+    }
+
+    if(!(str.find_first_not_of(' ') != std::string::npos)){
+        return false;
+    }
+
+    return true;
 }

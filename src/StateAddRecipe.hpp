@@ -17,7 +17,7 @@ struct InputGroup
 };
 
 
-class StateAddRecipe : public State{
+class StateAddRecipe : public State, EventHandler<PrepareAddRecipe>{
 public:
     StateAddRecipe(EventBus* eventBus);
     virtual ~StateAddRecipe() override;
@@ -25,10 +25,13 @@ public:
     virtual void handleInput() override;
     virtual void update(float dt) override;
     virtual void render() const override;
+    virtual void onEvent(const PrepareAddRecipe& event) override;
 
 private:
     std::vector<InputGroup> m_inputGroups;
     std::vector<UiButton*> m_buttons;
+
+    const bool validEntry(const std::string& str) const;
 };
 
 #endif

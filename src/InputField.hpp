@@ -31,6 +31,9 @@ public:
     void setPos(Vector2 pos);
     const Vector2 getSize() const;
 
+    const std::string& getText();
+    void clear();
+
 private:
     Vector2 m_pos;
     Vector2 m_size;

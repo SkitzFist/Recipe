@@ -279,6 +279,7 @@ void InputField::render() const{
 
 void InputField::onFocus(){
     m_blinkTimer = BLINK_TIME;
+    placeCarrotAt(m_carrotPos);
     m_isFocused = true;
 }
 
@@ -306,4 +307,14 @@ void InputField::setPos(Vector2 pos){
 
 const Vector2 InputField::getSize() const{
     return m_size;
+}
+
+const std::string& InputField::getText(){
+    removeCarrot();
+    return m_text;
+}
+
+void InputField::clear(){
+    m_text.clear();
+    m_carrotPos = 0;
 }
