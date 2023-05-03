@@ -1,5 +1,7 @@
 #include "StateAddRecipe.hpp"
 
+#include <stdlib.h>
+
 #include "Settings.h"
 #include "Button.hpp"
 
@@ -33,15 +35,39 @@ StateAddRecipe::~StateAddRecipe(){
 }
 
 void StateAddRecipe::handleInput(){
+    
+    handleTab();
+
     for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
         m_inputGroups[i].inputField->handleInput();
     }
 
     for(UiButton* button : m_buttons){
         button->handleInput();
-    }
+    }   
+}
 
-    if(IsKeyPressed(KEY_TAB)){
+void StateAddRecipe::handleTab(){
+    bool isReverseTab = IsKeyDown(KEY_LEFT_SHIFT) && IsKeyPressed(KEY_TAB);
+    if(isReverseTab){
+        int prevIndex = -1;
+        for(int i = 0; i < m_inputGroups.size(); ++i){
+            if(m_inputGroups[i].inputField->isFocused()){
+                prevIndex = i;
+                break;
+            }
+        }
+
+        if(prevIndex == -1){
+            m_inputGroups[m_inputGroups.size() -1].inputField->onFocus();
+            return;
+        }
+
+        int index = ((prevIndex) - 1 < 0 ? m_inputGroups.size() -1 : abs(prevIndex - 1));
+        m_inputGroups[prevIndex].inputField->onBlur();
+        m_inputGroups[index].inputField->onFocus();
+        
+    }else if(IsKeyPressed(KEY_TAB) && !isReverseTab){
         int index = -1;
         for(int i = 0; i < m_inputGroups.size(); ++i){
             if(m_inputGroups[i].inputField->isFocused()){
@@ -57,7 +83,6 @@ void StateAddRecipe::handleInput(){
             index = (index + 1) % (m_inputGroups.size());
             m_inputGroups[index].inputField->onFocus();
         }
-       
     }
 }
 
@@ -97,26 +122,26 @@ void StateAddRecipe::render() const{
 }
 
 void StateAddRecipe::onEvent(const PrepareAddRecipe& event){
-    std::vector<std::string> dataBaseEntry;
+
     for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
         std::string str = m_inputGroups[i].inputField->getText();
         
         if(!validEntry(str)){
-            log("Not valid entry: " + m_inputGroups[i].text);
+            Log::info("Not valid entry: " + m_inputGroups[i].text);
             return;
         }
-        dataBaseEntry.emplace_back(str);
     }
 
-    for(int i = 0; i < dataBaseEntry.size(); ++i){
-        log(std::to_string(i) + ": " + dataBaseEntry[i]);
-    }
+    Recipe recipe;
+    recipe.name = m_inputGroups[0].inputField->getText();
+    recipe.reference = m_inputGroups[1].inputField->getText();
+    recipe.tags = m_inputGroups[2].inputField->getText(); //todo need to verify tags
 
     for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
         m_inputGroups[i].inputField->clear();
     }
 
-    m_eventBus->fireEvent(AddRecipe(dataBaseEntry));
+    m_eventBus->fireEvent(AddRecipe(recipe));
 }
 
 const bool StateAddRecipe::validEntry(const std::string& str) const{

@@ -25,6 +25,7 @@ public:
     virtual void handleInput() override;
     virtual void update(float dt) override;
     virtual void render() const override;
+    void handleTab();
     virtual void onEvent(const PrepareAddRecipe& event) override;
 
 private:
