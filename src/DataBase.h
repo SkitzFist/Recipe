@@ -8,21 +8,15 @@
 
 #include "sqlite3.h"
 
-struct Recipe
-{
-    std::string name;
-    std::string tags;
-};
-
-class DataBase{
+class DataBase : public EventHandler<AddRecipe>{
 public:
     DataBase(EventBus* eventBus);
     ~DataBase();
-    bool insertRecipe(const std::string& _name, const std::string& _tags) const;
+    bool insertRecipe(const Recipe& recipe) const;
     void selectAllRecipe();
     void selectRecipeWithTags(const std::vector<std::string>& _vec);
     void selectRandomRecipeWithTags(const std::vector<std::string>& _vec) const;
-
+    void onEvent(const AddRecipe& event) override;
 private:
     sqlite3* m_db;
     const std::string FILE_NAME;

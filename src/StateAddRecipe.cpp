@@ -35,16 +35,18 @@ StateAddRecipe::~StateAddRecipe(){
 }
 
 void StateAddRecipe::handleInput(){
-    
     handleTab();
-
     for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
         m_inputGroups[i].inputField->handleInput();
     }
 
     for(UiButton* button : m_buttons){
         button->handleInput();
-    }   
+    }
+
+    if(IsKeyPressed(KEY_ENTER)){
+        handlePrepareAddRecipeEvent();
+    }
 }
 
 void StateAddRecipe::handleTab(){
@@ -122,7 +124,10 @@ void StateAddRecipe::render() const{
 }
 
 void StateAddRecipe::onEvent(const PrepareAddRecipe& event){
+    handlePrepareAddRecipeEvent();
+}
 
+void StateAddRecipe::handlePrepareAddRecipeEvent(){
     for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
         std::string str = m_inputGroups[i].inputField->getText();
         

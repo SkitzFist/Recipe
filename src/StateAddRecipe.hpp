@@ -27,6 +27,7 @@ public:
     virtual void render() const override;
     void handleTab();
     virtual void onEvent(const PrepareAddRecipe& event) override;
+    void handlePrepareAddRecipeEvent();
 
 private:
     std::vector<InputGroup> m_inputGroups;
