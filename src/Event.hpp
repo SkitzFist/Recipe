@@ -17,10 +17,13 @@ struct Recipe
     std::string reference;
     std::string tags;
 };
+
 class AddRecipe : public Event{
 public:
     Recipe recipe;
     AddRecipe(const Recipe& _recipe):recipe(_recipe){}
 };
+
+class SwitchModeEvent : Event {};
 
 #endif

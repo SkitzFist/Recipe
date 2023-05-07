@@ -11,7 +11,6 @@ Program::Program(EventBus* eventBus){
     SetTargetFPS(60);
     SetExitKey(KEY_ESCAPE);
     m_stateSwitcher = new StateSwitcher(eventBus);
-    Settings::loadFont();
 }
 
 Program::~Program(){
@@ -44,7 +43,7 @@ void Program::update(State* state){
 
 void Program::render(State* state) const{
     BeginDrawing();
-    ClearBackground(BLACK);
+    ClearBackground(BACKGROUND_COLOR);
     if(state){
         state->render();
     }

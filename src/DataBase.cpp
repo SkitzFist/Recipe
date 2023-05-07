@@ -137,12 +137,5 @@ bool DataBase::executeSQL(const std::string& _sql, int(*callback)(void*, int, ch
 
 void DataBase::onEvent(const AddRecipe& event){
     Log::info("AddRecipe Event");
-    if(!insertRecipe(event.recipe)){
-        Log::error("\tInserting recipe not succesfull. List recipe object:");
-        Log::error("\t\tName: " + event.recipe.name);
-        Log::error("\t\tref: " + event.recipe.reference);
-        Log::error("\t\ttags: " + event.recipe.tags);
-    }
-
-    selectAllRecipe();
+    insertRecipe(event.recipe);
 }

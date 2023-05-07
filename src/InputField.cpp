@@ -1,8 +1,12 @@
 #include "InputField.hpp"
 
-#include "Log.hpp"
-#include "Collision.h"
 #include <cstring>
+
+#include "Settings.h"
+#include "Collision.h"
+
+//debug
+#include "Log.hpp"
 
 InputField::InputField(Vector2 size):
     m_pos{0.f,0.f}, m_size(size), m_isFocused(false), m_text(""), BLINK_TIME(1.0f), m_blinkTimer(0.0f), m_carrotVisible(false),
@@ -272,9 +276,14 @@ void InputField::removeCarrot(){
 }
 
 void InputField::render() const{
-    DrawRectangle(m_pos.x, m_pos.y, m_size.x, m_size.y, RAYWHITE);
-    DrawRectangle(m_textMarkerBox.pos.x, getTextPos().y, m_textMarkerBox.size.x, m_textMarkerBox.size.y, BLUE);
-    DrawTextEx(GetFontDefault(), m_text.c_str(), getTextPos(), m_fontSize, 2.0, DARKGRAY);
+    
+    if(m_isFocused){
+        DrawRectangle(m_pos.x, m_pos.y, m_size.x, m_size.y, INPUT_BACKGROUND_FOCUSED_COLOR);
+    }else{
+        DrawRectangle(m_pos.x, m_pos.y, m_size.x, m_size.y, INPUT_BACKGROUND_COLOR);
+    }
+    DrawRectangle(m_textMarkerBox.pos.x, getTextPos().y, m_textMarkerBox.size.x, m_textMarkerBox.size.y, SKYBLUE);
+    DrawTextEx(GetFontDefault(), m_text.c_str(), getTextPos(), m_fontSize, 2.0, INPUT_TEXT_COLOR);
 }
 
 void InputField::onFocus(){

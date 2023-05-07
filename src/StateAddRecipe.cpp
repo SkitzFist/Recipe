@@ -13,13 +13,20 @@ StateAddRecipe::StateAddRecipe(EventBus* eventBus):
     m_inputGroups.emplace_back(InputGroup("Reference", new InputField(inputSize)));
     m_inputGroups.emplace_back(InputGroup("Tags", new InputField(inputSize)));
 
-    Vector2 buttonSize = {250, 50};
+    int nrOfButtons = 3;
+    Vector2 buttonSize = { 0.f, inputSize.y * 2.f};
+    float buttonSizeX = (inputSize.x / nrOfButtons);
+    m_buttonSpacing = 0.05f * inputSize.x;
+    buttonSizeX -= m_buttonSpacing;
+    buttonSize.x = buttonSizeX;     
+
     Button<SwitchStateToMainMenu>* backButton = new Button<SwitchStateToMainMenu>(buttonSize, eventBus, "Back");
     Button<PrepareAddRecipe>* addRecipeButton = new Button<PrepareAddRecipe>(buttonSize, eventBus, "Add");
-
+    Button<SwitchModeEvent>* regretAddRecipeButton = new Button<SwitchModeEvent>(buttonSize, eventBus, "Regret");
 
     m_buttons.emplace_back(backButton);
     m_buttons.emplace_back(addRecipeButton);
+    m_buttons.emplace_back(regretAddRecipeButton);
 
     eventBus->registerHandler<PrepareAddRecipe>(this);
 }
@@ -107,7 +114,7 @@ void StateAddRecipe::render() const{
         Vector2 inputPos{xPos, textPos.y + (textSize.y * 1.1f)};
         inputField->setPos(inputPos);
         
-        DrawTextEx(GetFontDefault(), m_inputGroups[i].text.c_str(), textPos, fontSize, 2.f, DARKGRAY);
+        DrawTextEx(GetFontDefault(), m_inputGroups[i].text.c_str(), textPos, fontSize, 2.f, INPUT_TITLE_COLOR);
         inputField->render();
 
         nextYPos = inputPos.y + (inputField->getSize().y * 2.f);
@@ -115,11 +122,10 @@ void StateAddRecipe::render() const{
 
     nextYPos *= 2.f;
     
-    float buttonSpacing = m_buttons[0]->getSize().x * 0.25f;
     for(UiButton* button : m_buttons){
         button->setPos(xPos, nextYPos);    
         button->render();
-        xPos += button->getSize().x + buttonSpacing;
+        xPos += button->getSize().x + m_buttonSpacing;
     }
 }
 

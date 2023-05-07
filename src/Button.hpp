@@ -17,7 +17,6 @@ public:
                 fontSize *= 0.95;
                 textSize = MeasureTextEx(GetFontDefault(), text, fontSize, 2.f);
             }
-            
         }
 
     virtual ~Button()override{}
@@ -37,25 +36,30 @@ public:
 
     virtual void render() const override{
         float roundness = 0.9f;
-        int segments = 10;
+        int segments = 16;
+
+        Rectangle buttonRec = {m_pos.x, m_pos.y, m_size.x, m_size.y};
+        Rectangle shadowRec = {m_pos.x + 4.f, m_pos.y + 4.f, m_size.x, m_size.y};
+
+        //Draw shadow
         if(m_isHovering){
-            Vector2 borderSize = Vector2{m_size.x * 1.025f, m_size.y * 1.15f};
-            Vector2 borderPos = Vector2{
-                m_pos.x - ((borderSize.x - m_size.x)/2.f),
-                m_pos.y - ((borderSize.y - m_size.y)/2.f)
-            };
-            Rectangle rec = {borderPos.x, borderPos.y, borderSize.x, borderSize.y};
-            DrawRectangleRounded(rec, roundness, segments, ORANGE);
-            
+            BeginBlendMode(BLEND_ADDITIVE);
+            DrawRectangleRounded(shadowRec, roundness, segments, BUTTON_SHADOW_COLOR);
+            EndBlendMode();
         }
 
-        Rectangle rec = {m_pos.x, m_pos.y, m_size.x, m_size.y};
+        //draw button
+        if(m_isHovering){
+            DrawRectangleRounded(buttonRec, roundness, segments, BUTTON_HOVERING_COLOR);
+        }else{
+            DrawRectangleRounded(buttonRec, roundness, segments, BUTTON_COLOR);
+        }
 
-        DrawRectangleRounded(rec, roundness, segments, RAYWHITE);
+        //draw text
         Font font = GetFontDefault();
         float posX = (m_pos.x + (m_size.x/2.f)) - (MeasureTextEx(font, m_text, fontSize, 2.0).x/2.f);
         float posY = (m_pos.y + (m_size.y/2.f)) - (MeasureTextEx(font, m_text, fontSize, 2.0).y/2.f);
-        DrawTextEx(font, m_text, Vector2{posX, posY}, fontSize, 2.0, DARKGRAY);
+        DrawTextEx(font, m_text, Vector2{posX, posY}, fontSize, 2.0, BUTTON_TEXT_COLOR);
     }
 
     virtual const Vector2& getSize() const override { return m_size; }
@@ -69,7 +73,6 @@ private:
     const char* m_text;
     EventBus* m_eventBus;
     bool m_isHovering;
-
 };
 
 #endif

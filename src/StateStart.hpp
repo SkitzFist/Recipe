@@ -15,7 +15,7 @@ virtual void update(float dt) override;
 virtual void render() const override;
 
 private:
-   std::vector<UiButton*> m_uiElements;
+   std::vector<UiButton*> m_buttons;
 };
 
 #endif

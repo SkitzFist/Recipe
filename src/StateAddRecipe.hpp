@@ -32,6 +32,9 @@ public:
 private:
     std::vector<InputGroup> m_inputGroups;
     std::vector<UiButton*> m_buttons;
+    float m_buttonSpacing;
+
+    const bool isInputGroupFocused() const;
 
     const bool validEntry(const std::string& str) const;
 };
