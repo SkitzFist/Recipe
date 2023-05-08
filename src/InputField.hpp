@@ -2,6 +2,7 @@
 #define _InputField
 
 #include <string>
+#include <vector>
 
 #include "raylib.h"
 
@@ -39,7 +40,7 @@ private:
     Vector2 m_size;
     bool m_isFocused;
 
-    std::string m_text;
+    std::vector<int> m_text;
     int m_fontSize;
     void handleTextInput();
     Vector2 getTextPos() const;

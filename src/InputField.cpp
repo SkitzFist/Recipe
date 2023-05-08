@@ -9,9 +9,10 @@
 #include "Log.hpp"
 
 InputField::InputField(Vector2 size):
-    m_pos{0.f,0.f}, m_size(size), m_isFocused(false), m_text(""), BLINK_TIME(1.0f), m_blinkTimer(0.0f), m_carrotVisible(false),
+    m_pos{0.f,0.f}, m_size(size), m_isFocused(false), m_text(0), BLINK_TIME(1.0f), m_blinkTimer(0.0f), m_carrotVisible(false),
     m_carrotPos(0), REMOVAL_COOLDOWN_START(0.2f), m_removalTimer(0.f), m_removalInProgress(false), m_removalElapsed(0.0f),
-    m_markTextInProgress(false), m_markTextStartPos{0.f,0.f}, m_markTextIndexes{0,0}{
+    m_markTextInProgress(false), m_markTextStartPos{0.f,0.f}, m_markTextIndexes{0,0}
+{
 
     m_fontSize = GetFontDefault().baseSize * static_cast<int>(m_size.y * 0.08f);
     m_textMarkerBox.size.y = MeasureTextEx(GetFontDefault(), "A", m_fontSize, 2.f).y;
@@ -38,8 +39,8 @@ void InputField::handleInput(){
     handleMarkText();
 
     if(IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_V) && m_isFocused){
-        m_text.insert(m_carrotPos, GetClipboardText());
-        m_carrotPos += std::strlen(GetClipboardText());
+      //m_text.insert(m_carrotPos, GetClipboardText());
+      //m_carrotPos += std::strlen(GetClipboardText());
     }
 }
 
@@ -85,26 +86,9 @@ void InputField::handleTextInput(){
     
     while (unicode > 0)
     {  
-        char code[4];
-        if (unicode == 0xC4) { // Ä
-            strcpy(code, "Ä");
-        } else if (unicode == 0xE4) { // ä
-            strcpy(code, "ä");
-        } else if (unicode == 0xD6) { // Ö
-            strcpy(code, "Ö");
-        } else if (unicode == 0xF6) { // ö
-            strcpy(code, "ö");
-        } else if (unicode == 0xC5) { // Å
-            strcpy(code, "Å");
-        } else if (unicode == 0xE5) { // å
-            strcpy(code, "å");
-        } else {
-            code[0] = (char)unicode;
-            code[1] = '\0';
-        }
-        m_text.insert(m_carrotPos, code);
+        m_text.push_back(unicode);
 
-        m_carrotPos += strlen(code); // increase by length of code instead of 1
+        ++m_carrotPos;
         unicode = GetCharPressed();
     }
 }
@@ -124,16 +108,13 @@ void InputField::handleRemoveBackward(){
     }
 
     while (IsKeyDown(KEY_BACKSPACE) && canRemoveBackwards())
-    {   
-        if(isSpecialCase(m_text)){
-            m_text.clear();
-            m_carrotPos = 0;
-        }else{
-            int erase = (m_carrotPos -2 > 0) && isSpecialCase(m_text.substr(m_carrotPos -2, 2)) ? 2 : 1;
-            m_text.erase(m_carrotPos - erase, erase);
-            m_carrotPos -= erase;
-        }
-        m_removalTimer = REMOVAL_COOLDOWN_START / (m_removalElapsed + 1.f);
+    {
+      if(m_text.size()>0)
+      {
+        m_text.resize(m_text.size()-1);
+        --m_carrotPos;
+      }
+      m_removalTimer = REMOVAL_COOLDOWN_START / (m_removalElapsed + 1.f);
     }
     
     if(IsKeyReleased(KEY_BACKSPACE)){
@@ -152,7 +133,8 @@ void InputField::handleMarkText(){
     //engage marking text
     if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
         removeCarrot();
-        Vector2 textSize = MeasureTextEx(GetFontDefault(), m_text.c_str(), m_fontSize, 2.f);
+        std::string tmp = "";
+        Vector2 textSize = MeasureTextEx(GetFontDefault(), tmp.c_str(), m_fontSize, 2.f);
         Vector2 textPos = getTextPos();
         Vector2 mousePos = GetMousePosition();
 
@@ -172,8 +154,8 @@ void InputField::handleMarkText(){
         }
 
         m_markTextInProgress = false;
-
-        Vector2 textSize = MeasureTextEx(GetFontDefault(), m_text.c_str(), m_fontSize, 2.f);
+        std::string tmp = "";
+        Vector2 textSize = MeasureTextEx(GetFontDefault(), tmp.c_str(), m_fontSize, 2.f);
         Vector2 textPos = getTextPos();
         Vector2 mousePos = GetMousePosition();
 
@@ -195,7 +177,7 @@ void InputField::handleMarkText(){
             m_markTextIndexes.y = tmp;
         }
         
-        std::string str = m_text.substr(m_markTextIndexes.x, (m_markTextIndexes.y - m_markTextIndexes.x) + 1);
+        std::string str = "";//m_text.substr(m_markTextIndexes.x, (m_markTextIndexes.y - m_markTextIndexes.x) + 1);
         
         std::size_t charIndex = str.find("|");
         while (charIndex != -1)
@@ -260,17 +242,19 @@ void InputField::updateCarrot(float dt){
 }
 
 void InputField::placeCarrotAt(int index){
-    m_text.insert(index, "|");
+  //m_text.insert(index, "|");
     m_carrotVisible = true;
     m_blinkTimer = BLINK_TIME;
 }
 
 void InputField::removeCarrot(){
-    std::size_t index = m_text.find("|");
+  /*
+  std::size_t index = m_text.find("|");
     while (index != -1){
         m_text.erase(index, 1);
         index = m_text.find("|");
     }
+  */
     m_carrotVisible = false;
     m_blinkTimer = BLINK_TIME;
 }
@@ -283,7 +267,8 @@ void InputField::render() const{
         DrawRectangle(m_pos.x, m_pos.y, m_size.x, m_size.y, INPUT_BACKGROUND_COLOR);
     }
     DrawRectangle(m_textMarkerBox.pos.x, getTextPos().y, m_textMarkerBox.size.x, m_textMarkerBox.size.y, SKYBLUE);
-    DrawTextEx(GetFontDefault(), m_text.c_str(), getTextPos(), m_fontSize, 2.0, INPUT_TEXT_COLOR);
+    //DrawTextEx(GetFontDefault(), m_text.c_str(), getTextPos(), m_fontSize, 2.0, INPUT_TEXT_COLOR);
+    DrawTextCodepoints(GetFontDefault(), m_text.data(), m_text.size(), getTextPos(), m_fontSize, 2.0, INPUT_TEXT_COLOR);
 }
 
 void InputField::onFocus(){
@@ -302,7 +287,8 @@ void InputField::onBlur(){
 }
 
 Vector2 InputField::getTextPos() const{
-    Vector2 textSize = MeasureTextEx(GetFontDefault(), m_text.c_str(), m_fontSize, 2.f);
+  std::string tmp = "";
+    Vector2 textSize = MeasureTextEx(GetFontDefault(), tmp.c_str(), m_fontSize, 2.f);
     return Vector2{m_pos.x + 2.f, (m_pos.y + (m_size.y/2.f)) - (textSize.y/2.f)};
 }
 
@@ -320,7 +306,7 @@ const Vector2 InputField::getSize() const{
 
 const std::string& InputField::getText(){
     removeCarrot();
-    return m_text;
+    return "";
 }
 
 void InputField::clear(){
