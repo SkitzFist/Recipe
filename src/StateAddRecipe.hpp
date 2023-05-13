@@ -1,6 +1,8 @@
 #ifndef _StateAddRecipe
 #define _StateAddRecipe
 
+#include <memory>
+
 #include "State.hpp"
 #include "InputField.hpp"
 #include "UiButton.hpp"
@@ -8,16 +10,20 @@
 struct InputGroup
 {
     std::string text = "";
-    InputField* inputField = nullptr;
+    std::unique_ptr<InputField> inputField = nullptr;
 
-    InputGroup(const std::string& _text, InputField*_inputField){
-        text = _text;
-        inputField = _inputField;
+    InputGroup(const std::string& _text, std::unique_ptr<InputField> _inputField)
+        : text(_text), inputField(std::move(_inputField))
+    {
+    
     }
+
+    const bool isFocused() const { return inputField->isFocused(); }
 };
 
 
-class StateAddRecipe : public State, EventHandler<PrepareAddRecipe>{
+class StateAddRecipe : public State, EventHandler<PrepareAddRecipeEvent>, EventHandler<PrepareModifyRecipeEvent>,
+    EventHandler<ClearInputEvent>{
 public:
     StateAddRecipe(EventBus* eventBus);
     virtual ~StateAddRecipe() override;
@@ -26,17 +32,33 @@ public:
     virtual void update(float dt) override;
     virtual void render() const override;
     void handleTab();
-    virtual void onEvent(const PrepareAddRecipe& event) override;
-    void handlePrepareAddRecipeEvent();
+
+    ///////////////////////////////////////////////////////////////
+    /// EventHandlers
+    virtual void onEvent(const PrepareAddRecipeEvent& event) override;
+    virtual void onEvent(const PrepareModifyRecipeEvent& event) override;
+    virtual void onEvent(const ClearInputEvent& event) override;
+    ///////////////////////////////////////////////////////////////
 
 private:
-    std::vector<InputGroup> m_inputGroups;
-    std::vector<UiButton*> m_buttons;
+    std::vector<std::unique_ptr<InputGroup>> m_inputGroups;
+    
+    UiButton* m_addRecipeButton;
+    UiButton* m_modifyRecipeButton;
+    UiButton* m_backButton;
+    UiButton* m_clearButton;
+
     float m_buttonSpacing;
+    
+    void toggleState();
 
-    const bool isInputGroupFocused() const;
-
+    ///////////////////////////////////////////////////////////////
+    /// Event handling
+    void handlePrepareAddRecipeEvent();
+    void handlePrepareModifyRecipeEvent();
     const bool validEntry(const std::string& str) const;
+    void handlePrepareSearchRecipeEvent();
+    //////////////////////////////////////////////////////////////
 };
 
 #endif

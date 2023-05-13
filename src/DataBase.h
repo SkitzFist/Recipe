@@ -8,7 +8,7 @@
 
 #include "sqlite3.h"
 
-class DataBase : public EventHandler<AddRecipe>{
+class DataBase : public EventHandler<AddRecipeEvent>{
 public:
     DataBase(EventBus* eventBus);
     ~DataBase();
@@ -16,7 +16,7 @@ public:
     void selectAllRecipe();
     void selectRecipeWithTags(const std::vector<std::string>& _vec);
     void selectRandomRecipeWithTags(const std::vector<std::string>& _vec) const;
-    void onEvent(const AddRecipe& event) override;
+    void onEvent(const AddRecipeEvent& event) override;
 private:
     sqlite3* m_db;
     const std::string FILE_NAME;

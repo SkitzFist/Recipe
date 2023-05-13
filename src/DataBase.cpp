@@ -24,7 +24,7 @@ int DataBase::getRowsCallback(void *data, int argc, char** argv, char** azColNam
 }
 
 DataBase::DataBase(EventBus* eventBus) :
-    EventHandler<AddRecipe>(getNewId()), FILE_NAME("recipe.db"){
+    EventHandler<AddRecipeEvent>(getNewId()), FILE_NAME("recipe.db"){
     
     std::filesystem::path path{FILE_NAME};
     if(!std::filesystem::exists(path)){
@@ -37,7 +37,7 @@ DataBase::DataBase(EventBus* eventBus) :
         setRecipeID();
     }
 
-    eventBus->registerHandler<AddRecipe>(this);
+    eventBus->registerHandler<AddRecipeEvent>(this);
 }
 
 DataBase::~DataBase(){
@@ -53,7 +53,7 @@ const std::string toLower(const std::string& _str){
 
 bool DataBase::insertRecipe(const Recipe& recipe) const{
     m_selectedRecipes.clear();
-    std::string sql = "INSERT INTO recipes(NAME, REFERENCE, TAGS) " \
+    std::string sql = "INSERT INTO recipes " \
                       "VALUES ('" + toLower(recipe.name) + "', '" + toLower(recipe.reference) + "'," + toLower(recipe.tags) + ")'";
     std::string s = "INSERT INTO recipes(NAME, REFERENCE, TAGS)" \
                     "VALUES ('" + toLower(recipe.name) + "','" +toLower(recipe.reference) + "','" + toLower(recipe.tags) + "');"; 
@@ -135,7 +135,7 @@ bool DataBase::executeSQL(const std::string& _sql, int(*callback)(void*, int, ch
     return true;
 }
 
-void DataBase::onEvent(const AddRecipe& event){
+void DataBase::onEvent(const AddRecipeEvent& event){
     Log::info("AddRecipe Event");
     insertRecipe(event.recipe);
 }

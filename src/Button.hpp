@@ -22,6 +22,8 @@ public:
     virtual ~Button()override{}
 
     virtual void handleInput() override{
+        if(!m_visible)
+            return;
         Vector2 mousePos = GetMousePosition();
 
         if(isColliding(mousePos, m_pos, m_size)){
@@ -35,6 +37,9 @@ public:
     }
 
     virtual void render() const override{
+        if(!m_visible){
+            return;
+        }
         float roundness = 0.9f;
         int segments = 16;
 

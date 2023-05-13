@@ -3,14 +3,6 @@
 
 #include <string>
 
-class Event{};
-
-class SwitchStateToAddRecipe : public Event{};
-class SwitchStateToGenerateRecipe : public Event{};
-class SwitchStateToMainMenu : public Event{};
-
-class PrepareAddRecipe : public Event{};
-
 struct Recipe
 {
     std::string name;
@@ -18,12 +10,31 @@ struct Recipe
     std::string tags;
 };
 
-class AddRecipe : public Event{
+class Event{};
+
+class SwitchStateToAddRecipe : public Event{};
+class SwitchStateToGenerateRecipe : public Event{};
+class SwitchStateToMainMenu : public Event{};
+
+class PrepareAddRecipeEvent : public Event{};
+class AddRecipeEvent : public Event{
 public:
     Recipe recipe;
-    AddRecipe(const Recipe& _recipe):recipe(_recipe){}
+    AddRecipeEvent(const Recipe& _recipe):recipe(_recipe){}
 };
 
-class SwitchModeEvent : Event {};
+
+class PrepareModifyRecipeEvent : Event{};
+class ModifyRecipeEvent : Event{
+    Recipe recipe;
+    ModifyRecipeEvent(const Recipe& _recipe):recipe(_recipe){}
+};
+
+class ClearInputEvent : public Event{};
+
+class SearchRecipeEvent : public Event{
+    std::string recipeName;
+    SearchRecipeEvent(const std::string& name) : recipeName(name){}
+};
 
 #endif

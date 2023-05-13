@@ -8,10 +8,10 @@
 //debug
 #include "Log.hpp"
 
-InputField::InputField(Vector2 size):
+InputField::InputField(Vector2 size, EventBus* eventBus):
     m_pos{0.f,0.f}, m_size(size), m_isFocused(false), m_text(""), BLINK_TIME(1.0f), m_blinkTimer(0.0f), m_carrotVisible(false),
     m_carrotPos(0), REMOVAL_COOLDOWN_START(0.2f), m_removalTimer(0.f), m_removalInProgress(false), m_removalElapsed(0.0f),
-    m_markTextInProgress(false), m_markTextStartPos{0.f,0.f}, m_markTextIndexes{0,0}{
+    m_markTextInProgress(false), m_markTextStartPos{0.f,0.f}, m_markTextIndexes{0,0}, m_eventBus(eventBus){
 
     m_fontSize = GetFontDefault().baseSize * static_cast<int>(m_size.y * 0.08f);
     m_textMarkerBox.size.y = MeasureTextEx(GetFontDefault(), "A", m_fontSize, 2.f).y;
@@ -19,7 +19,7 @@ InputField::InputField(Vector2 size):
 }
 
 InputField::~InputField(){
-
+    delete m_event;
 }
 
 void InputField::handleInput(){
@@ -139,6 +139,11 @@ void InputField::handleRemoveBackward(){
     if(IsKeyReleased(KEY_BACKSPACE)){
         m_removalInProgress = false;
         m_removalElapsed = 0.0f;
+    }
+
+    if(IsKeyPressed(KEY_ENTER)){
+        Log::info("Fire event");
+        m_eventBus->fireEvent(*m_event);
     }
 }
 
@@ -326,4 +331,8 @@ const std::string& InputField::getText(){
 void InputField::clear(){
     m_text.clear();
     m_carrotPos = 0;
+}
+
+void InputField::setEvent(Event* event){
+    m_event = event;
 }

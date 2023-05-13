@@ -6,12 +6,18 @@
 #include "Button.hpp"
 
 StateAddRecipe::StateAddRecipe(EventBus* eventBus):
-    State(eventBus), EventHandler<PrepareAddRecipe>(getNewId()){
+    State(eventBus), EventHandler<PrepareAddRecipeEvent>(getNewId()), EventHandler<PrepareModifyRecipeEvent>(getNewId()),
+    EventHandler<ClearInputEvent>(getNewId()){
 
     Vector2 inputSize = {Settings::WIDTH * 0.75f, Settings::HEIGHT * 0.025};
-    m_inputGroups.emplace_back(InputGroup("Name", new InputField(inputSize)));
-    m_inputGroups.emplace_back(InputGroup("Reference", new InputField(inputSize)));
-    m_inputGroups.emplace_back(InputGroup("Tags", new InputField(inputSize)));
+    m_inputGroups.emplace_back(std::make_unique<InputGroup>("Search", std::make_unique<InputField>(Vector2{inputSize.x / 2.f, inputSize.y}, eventBus)));
+    m_inputGroups.emplace_back(std::make_unique<InputGroup>("Name", std::make_unique<InputField>(inputSize, eventBus)));
+    m_inputGroups.emplace_back(std::make_unique<InputGroup>("Reference", std::make_unique<InputField>(inputSize, eventBus)));
+    m_inputGroups.emplace_back(std::make_unique<InputGroup>("Tags", std::make_unique<InputField>(inputSize, eventBus)));
+
+    for(int i = 1; i < m_inputGroups.size(); ++i){
+            m_inputGroups[i]->inputField->setEvent(new PrepareAddRecipeEvent());
+    }
 
     int nrOfButtons = 3;
     Vector2 buttonSize = { 0.f, inputSize.y * 2.f};
@@ -20,39 +26,53 @@ StateAddRecipe::StateAddRecipe(EventBus* eventBus):
     buttonSizeX -= m_buttonSpacing;
     buttonSize.x = buttonSizeX;     
 
-    Button<SwitchStateToMainMenu>* backButton = new Button<SwitchStateToMainMenu>(buttonSize, eventBus, "Back");
-    Button<PrepareAddRecipe>* addRecipeButton = new Button<PrepareAddRecipe>(buttonSize, eventBus, "Add");
-    Button<SwitchModeEvent>* regretAddRecipeButton = new Button<SwitchModeEvent>(buttonSize, eventBus, "Regret");
+    m_backButton = new Button<SwitchStateToMainMenu>(buttonSize, eventBus, "Back");
+    m_addRecipeButton = new Button<PrepareAddRecipeEvent>(buttonSize, eventBus, "Add");
+    m_modifyRecipeButton = new Button<PrepareModifyRecipeEvent>(buttonSize, eventBus, "Modify");
+    m_modifyRecipeButton->setVisible(false);
+    m_clearButton = new Button<ClearInputEvent>(buttonSize, eventBus, "Clear");
+    
 
-    m_buttons.emplace_back(backButton);
-    m_buttons.emplace_back(addRecipeButton);
-    m_buttons.emplace_back(regretAddRecipeButton);
-
-    eventBus->registerHandler<PrepareAddRecipe>(this);
+    eventBus->registerHandler<PrepareAddRecipeEvent>(this);
+    eventBus->registerHandler<PrepareModifyRecipeEvent>(this);
+    eventBus->registerHandler<ClearInputEvent>(this);
 }
 
 StateAddRecipe::~StateAddRecipe(){
-    for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
-        delete m_inputGroups[i].inputField;
-    }
 
-    for(std::size_t i = 0; i < m_buttons.size(); ++i){
-            delete m_buttons[i];
+    /* inputfields gets destroyed in dstr of inputGroup
+    for(std::size_t i = 0; i < m_recipeInputGroup.size(); ++i){
+        delete m_recipeInputGroup[i].inputField;
     }
+    delete m_searchInputGroup;
+    */
+    delete m_backButton;
+    delete m_addRecipeButton;
+    delete m_modifyRecipeButton;
+    delete m_clearButton;
 }
 
 void StateAddRecipe::handleInput(){
     handleTab();
     for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
-        m_inputGroups[i].inputField->handleInput();
+        m_inputGroups[i]->inputField->handleInput();
     }
 
-    for(UiButton* button : m_buttons){
-        button->handleInput();
-    }
+    m_addRecipeButton->handleInput();
+    m_backButton->handleInput();
+    m_modifyRecipeButton->handleInput();
+    m_clearButton->handleInput();
 
     if(IsKeyPressed(KEY_ENTER)){
-        handlePrepareAddRecipeEvent();
+        if(m_inputGroups[0]->isFocused()){
+            handlePrepareSearchRecipeEvent();
+        }else if(m_inputGroups[1]->isFocused() || m_inputGroups[2]->isFocused() || m_inputGroups[3]->isFocused()){
+            if(m_addRecipeButton->isVisible()){
+                handlePrepareAddRecipeEvent();
+            }else{
+                handlePrepareModifyRecipeEvent();
+            }
+        }
     }
 }
 
@@ -61,98 +81,139 @@ void StateAddRecipe::handleTab(){
     if(isReverseTab){
         int prevIndex = -1;
         for(int i = 0; i < m_inputGroups.size(); ++i){
-            if(m_inputGroups[i].inputField->isFocused()){
+            if(m_inputGroups[i]->inputField->isFocused()){
                 prevIndex = i;
                 break;
             }
         }
 
         if(prevIndex == -1){
-            m_inputGroups[m_inputGroups.size() -1].inputField->onFocus();
+            m_inputGroups[m_inputGroups.size() -1]->inputField->onFocus();
             return;
         }
 
         int index = ((prevIndex) - 1 < 0 ? m_inputGroups.size() -1 : abs(prevIndex - 1));
-        m_inputGroups[prevIndex].inputField->onBlur();
-        m_inputGroups[index].inputField->onFocus();
+        m_inputGroups[prevIndex]->inputField->onBlur();
+        m_inputGroups[index]->inputField->onFocus();
         
     }else if(IsKeyPressed(KEY_TAB) && !isReverseTab){
         int index = -1;
         for(int i = 0; i < m_inputGroups.size(); ++i){
-            if(m_inputGroups[i].inputField->isFocused()){
+            if(m_inputGroups[i]->inputField->isFocused()){
                 index = i;
                 break;
             }
         }
 
         if(index == -1){
-            m_inputGroups[0].inputField->onFocus();
+            m_inputGroups[0]->inputField->onFocus();
         }else{
-            m_inputGroups[index].inputField->onBlur();
+            m_inputGroups[index]->inputField->onBlur();
             index = (index + 1) % (m_inputGroups.size());
-            m_inputGroups[index].inputField->onFocus();
+            m_inputGroups[index]->inputField->onFocus();
         }
     }
 }
 
 void StateAddRecipe::update(float dt){
     for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
-        m_inputGroups[i].inputField->update(dt);
+        m_inputGroups[i]->inputField->update(dt);
     }
+}
+
+void StateAddRecipe::toggleState(){
+    m_addRecipeButton->setVisible(!m_addRecipeButton->isVisible());
+    m_modifyRecipeButton->setVisible(!m_addRecipeButton->isVisible());
 }
 
 void StateAddRecipe::render() const{
-    float nextYPos = m_inputGroups[0].inputField->getSize().y * 4.f;
-    float xPos = m_inputGroups[0].inputField->getSize().x / 14.f;
+    float nextYPos = m_inputGroups[0]->inputField->getSize().y * 8.f;
+    float xPos = m_inputGroups[0]->inputField->getSize().x / 14.f;
 
     for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
-        InputField* inputField = m_inputGroups[i].inputField;
         int fontSize = GetFontDefault().baseSize * 4;
-        Vector2 textSize = MeasureTextEx(GetFontDefault(), m_inputGroups[i].text.c_str(), (GetFontDefault().baseSize * 4), 2.f);
+        Vector2 textSize = MeasureTextEx(GetFontDefault(), m_inputGroups[i]->text.c_str(), (GetFontDefault().baseSize * 4), 2.f);
         
         Vector2 textPos{ xPos, nextYPos};
         Vector2 inputPos{xPos, textPos.y + (textSize.y * 1.1f)};
-        inputField->setPos(inputPos);
+        m_inputGroups[i]->inputField->setPos(inputPos);
         
-        DrawTextEx(GetFontDefault(), m_inputGroups[i].text.c_str(), textPos, fontSize, 2.f, INPUT_TITLE_COLOR);
-        inputField->render();
+        DrawTextEx(GetFontDefault(), m_inputGroups[i]->text.c_str(), textPos, fontSize, 2.f, INPUT_TITLE_COLOR);
+        m_inputGroups[i]->inputField->render();
 
-        nextYPos = inputPos.y + (inputField->getSize().y * 2.f);
+        nextYPos = inputPos.y + (m_inputGroups[i]->inputField->getSize().y * 2.f);
+        if(i == 0)
+            nextYPos *= 1.2f;
     }
 
-    nextYPos *= 2.f;
-    
-    for(UiButton* button : m_buttons){
-        button->setPos(xPos, nextYPos);    
-        button->render();
-        xPos += button->getSize().x + m_buttonSpacing;
-    }
+    m_backButton->setPos(xPos, nextYPos);
+    m_backButton->render();
+    xPos += m_backButton->getSize().x + m_buttonSpacing;
+
+    UiButton* button = m_addRecipeButton->isVisible() ? m_addRecipeButton : m_modifyRecipeButton;
+    button->setPos(xPos, nextYPos);
+    button->render();
+
+    xPos += button->getSize().x + m_buttonSpacing;
+
+    m_clearButton->setPos(xPos, nextYPos);
+    m_clearButton->render();
 }
 
-void StateAddRecipe::onEvent(const PrepareAddRecipe& event){
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////// EVENT HANDLERS ////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void StateAddRecipe::onEvent(const PrepareAddRecipeEvent& event){
+    Log::info("Prepare add recipe");
     handlePrepareAddRecipeEvent();
 }
 
 void StateAddRecipe::handlePrepareAddRecipeEvent(){
-    for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
-        std::string str = m_inputGroups[i].inputField->getText();
+    for(std::size_t i = 1; i < m_inputGroups.size(); ++i){
+        std::string str = m_inputGroups[i]->inputField->getText();
         
         if(!validEntry(str)){
-            Log::info("Not valid entry: " + m_inputGroups[i].text);
+            Log::info("Not valid entry: " + m_inputGroups[i]->text);
             return;
         }
     }
 
     Recipe recipe;
-    recipe.name = m_inputGroups[0].inputField->getText();
-    recipe.reference = m_inputGroups[1].inputField->getText();
-    recipe.tags = m_inputGroups[2].inputField->getText(); //todo need to verify tags
+    recipe.name = m_inputGroups[0]->inputField->getText();
+    recipe.reference = m_inputGroups[1]->inputField->getText();
+    recipe.tags = m_inputGroups[2]->inputField->getText(); //todo need to verify tags
 
     for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
-        m_inputGroups[i].inputField->clear();
+        m_inputGroups[i]->inputField->clear();
     }
 
-    m_eventBus->fireEvent(AddRecipe(recipe));
+    m_eventBus->fireEvent(AddRecipeEvent(recipe));
+}
+
+void StateAddRecipe::onEvent(const PrepareModifyRecipeEvent& event){
+    Log::info("ModifyEvent");
+}
+
+void StateAddRecipe::handlePrepareModifyRecipeEvent(){
+
+}
+
+void StateAddRecipe::onEvent(const ClearInputEvent& event){
+    for(int i = 0; i < m_inputGroups.size(); ++i){
+        m_inputGroups[i]->inputField->clear();
+    }
+
+    if(m_modifyRecipeButton->isVisible()){
+        toggleState();
+    }
+}
+
+void StateAddRecipe::handlePrepareSearchRecipeEvent(){
+    if(m_inputGroups[0]->text.empty()){
+        return;
+    }
+    std::string recipeName = m_inputGroups[0]->inputField->getText();
+    Log::info("Prepare to search for: " + recipeName);
 }
 
 const bool StateAddRecipe::validEntry(const std::string& str) const{
