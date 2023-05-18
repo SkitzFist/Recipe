@@ -5,6 +5,7 @@
 
 struct Recipe
 {
+    int id;
     std::string name;
     std::string reference;
     std::string tags;
@@ -26,15 +27,26 @@ public:
 
 class PrepareModifyRecipeEvent : Event{};
 class ModifyRecipeEvent : Event{
+    public:
     Recipe recipe;
     ModifyRecipeEvent(const Recipe& _recipe):recipe(_recipe){}
 };
 
 class ClearInputEvent : public Event{};
 
-class SearchRecipeEvent : public Event{
+/////////////
+///Search///
+///////////
+class SearchRecipeEvent : Event{
+    public:
     std::string recipeName;
     SearchRecipeEvent(const std::string& name) : recipeName(name){}
+};
+
+class SearchFoundEvent : Event{
+    public:
+    Recipe recipe;
+    SearchFoundEvent(Recipe _recipe) : recipe(_recipe){}
 };
 
 #endif

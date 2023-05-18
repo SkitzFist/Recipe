@@ -8,11 +8,16 @@
 #include "Log.hpp"
 
 int DataBase::getRecipesCallback(void *data, int argc, char** argv, char** azColName){
-    for(int i = 1; i < argc; i += 4){
+    if(argc <= 0){
+        return -1;
+    }
+
+    for(int i = 0; i < argc; i += 4){
         Recipe recipe;
-        recipe.name = argv[i];
-        recipe.reference = argv[i+1];
-        recipe.tags = argv[i+2];
+        recipe.id = atoi(argv[i]);
+        recipe.name = argv[i+1];
+        recipe.reference = argv[i+2];
+        recipe.tags = argv[i+3];
         m_selectedRecipes.emplace_back(recipe);
     }
     return 0;
@@ -24,7 +29,8 @@ int DataBase::getRowsCallback(void *data, int argc, char** argv, char** azColNam
 }
 
 DataBase::DataBase(EventBus* eventBus) :
-    EventHandler<AddRecipeEvent>(getNewId()), FILE_NAME("recipe.db"){
+    EventHandler<AddRecipeEvent>(getNewId()), EventHandler<SearchRecipeEvent>(getNewId()), 
+        EventHandler<ModifyRecipeEvent>(getNewId()), FILE_NAME("recipe.db"), m_eventBus(eventBus){
     
     std::filesystem::path path{FILE_NAME};
     if(!std::filesystem::exists(path)){
@@ -37,7 +43,9 @@ DataBase::DataBase(EventBus* eventBus) :
         setRecipeID();
     }
 
-    eventBus->registerHandler<AddRecipeEvent>(this);
+    m_eventBus->registerHandler<AddRecipeEvent>(this);
+    m_eventBus->registerHandler<SearchRecipeEvent>(this);
+    m_eventBus->registerHandler<ModifyRecipeEvent>(this);
 }
 
 DataBase::~DataBase(){
@@ -53,25 +61,41 @@ const std::string toLower(const std::string& _str){
 
 bool DataBase::insertRecipe(const Recipe& recipe) const{
     m_selectedRecipes.clear();
-    std::string sql = "INSERT INTO recipes " \
-                      "VALUES ('" + toLower(recipe.name) + "', '" + toLower(recipe.reference) + "'," + toLower(recipe.tags) + ")'";
-    std::string s = "INSERT INTO recipes(NAME, REFERENCE, TAGS)" \
+    std::string query = "INSERT INTO recipes(NAME, REFERENCE, TAGS)" \
                     "VALUES ('" + toLower(recipe.name) + "','" +toLower(recipe.reference) + "','" + toLower(recipe.tags) + "');"; 
     
-    return executeSQL(s, nullptr, nullptr);
+    return executeSQL(query, nullptr, nullptr);
+}
+
+bool DataBase::searchRecipe(const std::string& name){
+    m_selectedRecipes.clear();
+    std::string query = "SELECT * FROM recipes WHERE name = '"  + name + "';";
+    executeSQL(query, getRecipesCallback, nullptr);
+    return m_selectedRecipes.size() > 0;
+}
+
+bool DataBase::updateRecipe(const Recipe& recipe){
+    std::string query = "UPDATE recipes " \
+                         "SET name = '" + recipe.name + "', " \
+                         "reference = '" + recipe.reference + "', " \
+                         "tags = '" + recipe.tags + "' "\
+                         "WHERE id = " + std::to_string(recipe.id) +";"
+    ;
+
+    return executeSQL(query, nullptr, nullptr);
 }
 
 void DataBase::selectRecipeWithTags(const std::vector<std::string>& _vec){
     m_selectedRecipes.clear();
-    std::string sql = "SELECT * FROM recipes WHERE tags LIKE ";
+    std::string query = "SELECT * FROM recipes WHERE tags LIKE ";
     for(unsigned int i = 0; i < _vec.size(); ++i){
-            sql += "'%" + _vec[i] + "%'";
+            query += "'%" + _vec[i] + "%'";
             if(i < _vec.size() - 1){
-                sql += " AND tags LIKE ";
+                query += " AND tags LIKE ";
             }
     }
     
-    executeSQL(sql, getRecipesCallback, nullptr);
+    executeSQL(query, getRecipesCallback, nullptr);
 }
 
 
@@ -122,10 +146,10 @@ void DataBase::setRecipeID() const{
     executeSQL(sql, getRowsCallback, nullptr);
 }
 
-bool DataBase::executeSQL(const std::string& _sql, int(*callback)(void*, int, char**, char**), void* _data) const{
+bool DataBase::executeSQL(const std::string& _query, int(*callback)(void*, int, char**, char**), void* _data) const{
     char* error = nullptr;
-    Log::info("Executing SQL: " + _sql);
-    int result = sqlite3_exec(m_db, _sql.c_str(), callback, _data, &error);
+    Log::info("Executing SQL: " + _query);
+    int result = sqlite3_exec(m_db, _query.c_str(), callback, _data, &error);
     if(result != SQLITE_OK){
         Log::error(error);
         sqlite3_free(error);
@@ -135,7 +159,29 @@ bool DataBase::executeSQL(const std::string& _sql, int(*callback)(void*, int, ch
     return true;
 }
 
+////////////////////////////////////////////////////
+/// EventHandlers                               ///
+//////////////////////////////////////////////////
+
 void DataBase::onEvent(const AddRecipeEvent& event){
-    Log::info("AddRecipe Event");
     insertRecipe(event.recipe);
+}
+
+void DataBase::onEvent(const SearchRecipeEvent& event){
+    bool success = searchRecipe(toLower(event.recipeName));
+    if(success){
+        m_eventBus->fireEvent(SearchFoundEvent(m_selectedRecipes[0]));
+    }else{
+        //Todo
+        //Look for similar
+        //if found, send searchSuggestionEvent
+    }
+}
+
+void DataBase::onEvent(const ModifyRecipeEvent& event){
+    if(updateRecipe(event.recipe)){
+        Log::info("Recipe updated");
+    }else{
+        Log::info("Not updated");
+    }
 }

@@ -23,7 +23,7 @@ struct InputGroup
 
 
 class StateAddRecipe : public State, EventHandler<PrepareAddRecipeEvent>, EventHandler<PrepareModifyRecipeEvent>,
-    EventHandler<ClearInputEvent>{
+    EventHandler<ClearInputEvent>, EventHandler<SearchFoundEvent>{
 public:
     StateAddRecipe(EventBus* eventBus);
     virtual ~StateAddRecipe() override;
@@ -38,11 +38,13 @@ public:
     virtual void onEvent(const PrepareAddRecipeEvent& event) override;
     virtual void onEvent(const PrepareModifyRecipeEvent& event) override;
     virtual void onEvent(const ClearInputEvent& event) override;
+    virtual void onEvent(const SearchFoundEvent& event) override;
     ///////////////////////////////////////////////////////////////
 
 private:
     std::vector<std::unique_ptr<InputGroup>> m_inputGroups;
-    
+    const int getInputIndex(const std::string& groupName) const;
+
     UiButton* m_addRecipeButton;
     UiButton* m_modifyRecipeButton;
     UiButton* m_backButton;
@@ -56,7 +58,9 @@ private:
     /// Event handling
     void handlePrepareAddRecipeEvent();
     void handlePrepareModifyRecipeEvent();
-    const bool validEntry(const std::string& str) const;
+    const bool inputFieldsAreValid() const;
+    const bool isValidEntry(const std::string& str) const;
+    void handleClearInputEvent();
     void handlePrepareSearchRecipeEvent();
     //////////////////////////////////////////////////////////////
 };

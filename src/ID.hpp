@@ -9,7 +9,7 @@ struct ID
     }
 };
 
-static int getNewId(){
+inline int getNewId(){
     static int counter = 0;
     return counter++;
 }

@@ -323,6 +323,12 @@ const Vector2 InputField::getSize() const{
     return m_size;
 }
 
+void InputField::setText(const std::string& text){
+    m_text.clear();
+    m_text = text;
+    m_carrotPos = m_text.size();
+}
+
 const std::string& InputField::getText(){
     removeCarrot();
     return m_text;

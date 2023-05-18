@@ -10,8 +10,9 @@ namespace Settings{
     //----------------------------------------------------------------------------------   
 
     //////////GREEN HELL\\\\\\\\\\
+    //TODO: make inline
     //General
-    #define BACKGROUND_COLOR CLITERAL(Color){0, 0, 0, 255}
+    #define  BACKGROUND_COLOR CLITERAL(Color){0, 0, 0, 255}
     #define TITLE_COLOR CLITERAL(Color){102, 204, 102, 255}
 
     //Button

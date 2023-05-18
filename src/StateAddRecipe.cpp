@@ -7,7 +7,7 @@
 
 StateAddRecipe::StateAddRecipe(EventBus* eventBus):
     State(eventBus), EventHandler<PrepareAddRecipeEvent>(getNewId()), EventHandler<PrepareModifyRecipeEvent>(getNewId()),
-    EventHandler<ClearInputEvent>(getNewId()){
+    EventHandler<ClearInputEvent>(getNewId()), EventHandler<SearchFoundEvent>(getNewId()){
 
     Vector2 inputSize = {Settings::WIDTH * 0.75f, Settings::HEIGHT * 0.025};
     m_inputGroups.emplace_back(std::make_unique<InputGroup>("Search", std::make_unique<InputField>(Vector2{inputSize.x / 2.f, inputSize.y}, eventBus)));
@@ -36,16 +36,10 @@ StateAddRecipe::StateAddRecipe(EventBus* eventBus):
     eventBus->registerHandler<PrepareAddRecipeEvent>(this);
     eventBus->registerHandler<PrepareModifyRecipeEvent>(this);
     eventBus->registerHandler<ClearInputEvent>(this);
+    eventBus->registerHandler<SearchFoundEvent>(this);
 }
 
 StateAddRecipe::~StateAddRecipe(){
-
-    /* inputfields gets destroyed in dstr of inputGroup
-    for(std::size_t i = 0; i < m_recipeInputGroup.size(); ++i){
-        delete m_recipeInputGroup[i].inputField;
-    }
-    delete m_searchInputGroup;
-    */
     delete m_backButton;
     delete m_addRecipeButton;
     delete m_modifyRecipeButton;
@@ -160,45 +154,94 @@ void StateAddRecipe::render() const{
     m_clearButton->render();
 }
 
+const int StateAddRecipe::getInputIndex(const std::string& groupName) const{
+    for(int i = 0 ; i < m_inputGroups.size(); ++i){
+        if(m_inputGroups[i]->text == groupName){
+            return i;
+        }
+    }
+    return -1;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////// EVENT HANDLERS ////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+const bool StateAddRecipe::inputFieldsAreValid() const{
+    int nameInputIndex = getInputIndex("Name");
+    int referenceInputIndex = getInputIndex("Reference");
+    int tagsInputIndex = getInputIndex("Tags");
+
+    bool isValidIndexes = (
+        nameInputIndex != -1 ||
+        referenceInputIndex != -1 ||
+        tagsInputIndex != -1
+    );
+
+    if(!isValidIndexes)
+        return false;
+    
+    bool isValidInputs = (
+        isValidEntry(m_inputGroups[nameInputIndex]->text) ||
+        isValidEntry(m_inputGroups[referenceInputIndex]->text) ||
+        isValidEntry(m_inputGroups[tagsInputIndex]->text)
+    );
+
+    if(!isValidInputs)
+        return false;
+
+    return true;
+}
+
+////////////////////////////
+///PrepareAddRecipeEvent///
+//////////////////////////
 void StateAddRecipe::onEvent(const PrepareAddRecipeEvent& event){
-    Log::info("Prepare add recipe");
     handlePrepareAddRecipeEvent();
 }
 
 void StateAddRecipe::handlePrepareAddRecipeEvent(){
-    for(std::size_t i = 1; i < m_inputGroups.size(); ++i){
-        std::string str = m_inputGroups[i]->inputField->getText();
-        
-        if(!validEntry(str)){
-            Log::info("Not valid entry: " + m_inputGroups[i]->text);
-            return;
-        }
+        if(inputFieldsAreValid()){
+        int nameInputIndex = getInputIndex("Name");
+        Recipe recipe;
+        recipe.name = m_inputGroups[nameInputIndex]->inputField->getText();
+        recipe.reference = m_inputGroups[nameInputIndex + 1]->inputField->getText();
+        recipe.tags = m_inputGroups[nameInputIndex + 2]->inputField->getText(); // TODO: need to verify tags
+
+        handleClearInputEvent();
+        m_eventBus->fireEvent(AddRecipeEvent(recipe));
     }
-
-    Recipe recipe;
-    recipe.name = m_inputGroups[0]->inputField->getText();
-    recipe.reference = m_inputGroups[1]->inputField->getText();
-    recipe.tags = m_inputGroups[2]->inputField->getText(); //todo need to verify tags
-
-    for(std::size_t i = 0; i < m_inputGroups.size(); ++i){
-        m_inputGroups[i]->inputField->clear();
-    }
-
-    m_eventBus->fireEvent(AddRecipeEvent(recipe));
 }
 
+///////////////////////////////
+///PrepareModifyRecipeEvent///
+/////////////////////////////
 void StateAddRecipe::onEvent(const PrepareModifyRecipeEvent& event){
-    Log::info("ModifyEvent");
+    handlePrepareModifyRecipeEvent();
 }
 
 void StateAddRecipe::handlePrepareModifyRecipeEvent(){
+         if(inputFieldsAreValid()){
+        int nameInputIndex = getInputIndex("Name");
+        Recipe recipe;
+        recipe.name = m_inputGroups[nameInputIndex]->inputField->getText();
+        recipe.reference = m_inputGroups[nameInputIndex + 1]->inputField->getText();
+        recipe.tags = m_inputGroups[nameInputIndex + 2]->inputField->getText(); // TODO: need to verify tags
 
+        handleClearInputEvent();
+        m_eventBus->fireEvent(ModifyRecipeEvent(recipe));
+    }    
 }
 
+//////////////////////
+///ClearInputEvent///
+////////////////////
 void StateAddRecipe::onEvent(const ClearInputEvent& event){
+    handleClearInputEvent();
+}
+
+void StateAddRecipe::handleClearInputEvent(){
     for(int i = 0; i < m_inputGroups.size(); ++i){
         m_inputGroups[i]->inputField->clear();
     }
@@ -208,15 +251,24 @@ void StateAddRecipe::onEvent(const ClearInputEvent& event){
     }
 }
 
+//////////////////////////////
+///PrepareSarchRecipeEvent///
+////////////////////////////
 void StateAddRecipe::handlePrepareSearchRecipeEvent(){
-    if(m_inputGroups[0]->text.empty()){
+    int inputIndex = getInputIndex("Search");
+    if(inputIndex == -1)
+        return;
+    
+    std::string recipeName = m_inputGroups[inputIndex]->inputField->getText();
+    if(!isValidEntry(recipeName)){
         return;
     }
-    std::string recipeName = m_inputGroups[0]->inputField->getText();
+
     Log::info("Prepare to search for: " + recipeName);
+    m_eventBus->fireEvent(SearchRecipeEvent(recipeName));
 }
 
-const bool StateAddRecipe::validEntry(const std::string& str) const{
+const bool StateAddRecipe::isValidEntry(const std::string& str) const{
     if(str.empty()){
         return false;
     }
@@ -226,4 +278,18 @@ const bool StateAddRecipe::validEntry(const std::string& str) const{
     }
 
     return true;
+}
+
+///////////////////////
+///SearchFoundEvent///
+/////////////////////
+
+void StateAddRecipe::onEvent(const SearchFoundEvent& event){
+    int nameInputIndex = getInputIndex("Name");
+
+    m_inputGroups[nameInputIndex]->inputField->setText(event.recipe.name);
+    m_inputGroups[nameInputIndex + 1]->inputField->setText(event.recipe.reference);
+    m_inputGroups[nameInputIndex + 2]->inputField->setText(event.recipe.tags);
+    
+    toggleState();
 }

@@ -32,7 +32,8 @@ public:
     const Vector2 getPos() const;
     void setPos(Vector2 pos);
     const Vector2 getSize() const;
-
+    
+    void setText(const std::string& text);
     const std::string& getText();
     void clear();
     void* eventHandle;
