@@ -1,7 +1,8 @@
 #ifndef _Program
 #define _Program
 
-#include "StateSwitcher.hpp"
+#include "EventBus.hpp"
+#include "View.h"
 
 class Program{
 public:
@@ -10,10 +11,14 @@ public:
     void run();
 
 private:
-    StateSwitcher* m_stateSwitcher;
-    void handleInput(State* state);
-    void update(State* state);
-    void render(State* state) const;
+    Timer m_frameTimer;
+
+    void handleInput();
+    void update(float dt);
+    void render() const;
+
+    View* m_view;
+        
 };
 
 #endif
