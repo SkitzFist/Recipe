@@ -13,10 +13,6 @@ struct Recipe
 
 class Event{};
 
-class SwitchStateToAddRecipe : public Event{};
-class SwitchStateToGenerateRecipe : public Event{};
-class SwitchStateToMainMenu : public Event{};
-
 class PrepareAddRecipeEvent : public Event{};
 class AddRecipeEvent : public Event{
 public:

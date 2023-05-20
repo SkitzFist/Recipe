@@ -1,3 +1,4 @@
+/*
 #include "StateAddRecipe.hpp"
 
 #include <stdlib.h>
@@ -26,7 +27,6 @@ StateAddRecipe::StateAddRecipe(EventBus* eventBus):
     buttonSizeX -= m_buttonSpacing;
     buttonSize.x = buttonSizeX;     
 
-    m_backButton = new Button<SwitchStateToMainMenu>(buttonSize, eventBus, "Back");
     m_addRecipeButton = new Button<PrepareAddRecipeEvent>(buttonSize, eventBus, "Add");
     m_modifyRecipeButton = new Button<PrepareModifyRecipeEvent>(buttonSize, eventBus, "Modify");
     m_modifyRecipeButton->setVisible(false);
@@ -293,3 +293,4 @@ void StateAddRecipe::onEvent(const SearchFoundEvent& event){
     
     toggleState();
 }
+*/

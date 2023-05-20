@@ -2,7 +2,10 @@
 #define _Program
 
 #include "EventBus.hpp"
-#include "View.h"
+
+#include "Timer.hpp"
+#include "views/view.h"
+#include "UiButton.hpp"
 
 class Program{
 public:
@@ -16,9 +19,9 @@ private:
     void handleInput();
     void update(float dt);
     void render() const;
-
-    View* m_view;
-        
+    
+    View* m_addRecipeView;
+    std::vector<UiButton*> m_buttons;
 };
 
 #endif

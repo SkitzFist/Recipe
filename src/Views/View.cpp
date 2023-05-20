@@ -1,9 +1,12 @@
 #include "View.h"
 #include "Lerp.hpp"
 
+//Debug
+#include "Log.hpp"
+
 View::View(Vector2 outOfViewPos, Vector2 inViewPos, Vector2 size):
-    m_outOfViewPos(outOfViewPos), m_inViewPos(inViewPos), m_currentPos(outOfViewPos) ,m_size(size),
-    m_transitionTimer(500), m_isInTransition(true), m_transitionShow(true){
+    m_size(size), m_currentPos(outOfViewPos), m_outOfViewPos(outOfViewPos), m_inViewPos(inViewPos),
+    m_isVisible(false), m_transitionTimer(1000), m_isInTransition(false), m_transitionShow(true){
 }
 
 View::~View(){
@@ -16,9 +19,9 @@ void View::update(const float dt){
     }
 
     if(m_transitionShow){
-        transition( m_inViewPos, m_outOfViewPos, Lerp::smoothStep);
+        transition( m_inViewPos, m_outOfViewPos, Lerp::smoothStep2);
     }else{
-        transition(m_outOfViewPos, m_inViewPos, Lerp::smoothStart);
+        transition(m_outOfViewPos, m_inViewPos, Lerp::smoothStep);
     }
 
     if(m_transitionTimer.hasElapsed()){
@@ -34,8 +37,12 @@ void View::transition(Vector2 startPos, Vector2 endPos, const float(*lerpPtr)(fl
         m_currentPos = {newX, newY};
 }
 
-void View::render()const{
-    DrawRectangle(m_currentPos.x, m_currentPos.y, m_size.x, m_size.y, RED);
+void View::toggleVisibility(){
+    if(m_isVisible){
+        hide();
+    }else{
+        show();
+    }
 }
 
 void View::show(){
@@ -53,5 +60,5 @@ void View::hide(){
 }
 
 const bool View::isVisible() const{
-
+    return m_isVisible;
 }
