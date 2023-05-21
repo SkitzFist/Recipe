@@ -1,6 +1,8 @@
 #ifndef _UiElement
 #define _UiElement
 
+#include <string>
+
 #include "raylib.h"
 
 class UiButton{
@@ -16,7 +18,8 @@ public:
     virtual void render() const = 0;
     void setVisible(bool visible){m_visible = visible;}
     const bool isVisible() const {return m_visible;}
-
+    virtual void setText(const std::string& text) = 0;
+    virtual const std::string& getText() const = 0;
 protected:
     bool m_visible = true;
 

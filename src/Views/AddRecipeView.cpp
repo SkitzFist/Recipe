@@ -2,14 +2,13 @@
 
 //debug
 #include "Log.hpp"
+#include "Settings.h"
 
 AddRecipeView::AddRecipeView():
 View(outOfViewPos, inViewPos, size){
-
 }
 
 AddRecipeView::~AddRecipeView(){
-
 }
 
 void AddRecipeView::handleInput(){
@@ -21,5 +20,7 @@ void AddRecipeView::update(const float dt){
 }
 
 void AddRecipeView::render() const{
-    DrawRectangle(m_currentPos.x, m_currentPos.y, m_size.x, m_size.y, SKYBLUE);
+    BeginBlendMode(BLEND_ADDITIVE);
+    DrawRectangle(m_currentPos.x, m_currentPos.y, size.x, size.y, VIEW_BACKGROUND_BLUR);  
+    EndBlendMode();
 }

@@ -13,8 +13,10 @@ struct Recipe
 
 class Event{};
 
-class PrepareAddRecipeEvent : public Event{};
-class AddRecipeEvent : public Event{
+class ToggelAddRecipeViewEvent : Event{};
+
+class PrepareAddRecipeEvent : Event{};
+class AddRecipeEvent : Event{
 public:
     Recipe recipe;
     AddRecipeEvent(const Recipe& _recipe):recipe(_recipe){}

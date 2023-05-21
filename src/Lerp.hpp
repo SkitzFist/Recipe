@@ -1,6 +1,8 @@
 #ifndef _Lerp
 #define _Lerp
 
+#include <cmath>
+
 namespace Lerp
 {
     inline constexpr const float lerp(float time, float startValue, float endValue){
@@ -53,6 +55,40 @@ namespace Lerp
     inline constexpr const float smoothStep3(float time){
         return Lerp::lerp(time, Lerp::smoothStart3(time), Lerp::smoothStop3(time));
     }
+
+    inline constexpr const float overshoot(float time){
+        const float s = 1.70158f;; 
+        return time * time * ((s + 1) * time - s);
+    }
+
+    inline constexpr const float snapIn(float time){
+        if (time < 0.9f)
+            return Lerp::smoothStart3(time / 0.9f);
+        else
+            return 1 + (time - 0.9f) * 10;
+    }
+
+    inline constexpr const float easeOutBack(float time){
+        const float c1 = 1.70158f;
+        const float c3 = c1 + 1;
+
+        float x = time - 1;
+        float x2 = x * x; // this is equivalent to pow(x, 2)
+        float x3 = x2 * x; // this is equivalent to pow(x, 3)
+        
+        return 1 + c3 * x3 + c1 * x2;
+    }
+
+    inline constexpr const float easeOutElastic(float time){
+        const float c4 = PI / 2.f;
+
+        if(time == 0.f)
+            return 0.f;
+        if(time == 1.f)
+            return 1.f;
+
+    return powf(2.f, -10.f * time) * sinf((time * 10.f - 0.75f) * c4) + 1.f;
+}
 }
 
 #endif

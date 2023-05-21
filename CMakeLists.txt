@@ -35,6 +35,7 @@ target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES} ${sqlite3_SOURCE_DIR}/
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE} ${sqlite3_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/assets)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-nonportable-include-path")
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib stdc++fs)
 
   #compile with: cmake .. -G "MinGW Makefiles" %*  -DCMAKE_C_COMPILER=<gcc> -DCMAKE_CXX_COMPILER=<g++>

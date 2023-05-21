@@ -69,7 +69,8 @@
         "*.m": "cpp",
         "xhash": "cpp",
         "typeindex": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "set": "cpp"
     },
     "cmake.configureOnOpen": false
 }

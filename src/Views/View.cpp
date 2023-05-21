@@ -6,11 +6,10 @@
 
 View::View(Vector2 outOfViewPos, Vector2 inViewPos, Vector2 size):
     m_size(size), m_currentPos(outOfViewPos), m_outOfViewPos(outOfViewPos), m_inViewPos(inViewPos),
-    m_isVisible(false), m_transitionTimer(1000), m_isInTransition(false), m_transitionShow(true){
+    m_isVisible(false), m_transitionTimer(800), m_isInTransition(false), m_transitionShow(true){
 }
 
 View::~View(){
-
 }
 
 void View::update(const float dt){
@@ -19,9 +18,10 @@ void View::update(const float dt){
     }
 
     if(m_transitionShow){
-        transition( m_inViewPos, m_outOfViewPos, Lerp::smoothStep2);
+        transition(m_outOfViewPos, m_inViewPos, Lerp::easeOutBack);
     }else{
-        transition(m_outOfViewPos, m_inViewPos, Lerp::smoothStep);
+        
+        transition( m_inViewPos, m_outOfViewPos, Lerp::easeOutBack);
     }
 
     if(m_transitionTimer.hasElapsed()){
@@ -61,4 +61,13 @@ void View::hide(){
 
 const bool View::isVisible() const{
     return m_isVisible;
+}
+
+void View::setVisible(bool visible){
+    if(visible != m_isVisible)
+        toggleVisibility();
+}
+
+const bool View::isInTransition() const{
+    return m_isInTransition;
 }

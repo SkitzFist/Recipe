@@ -7,6 +7,11 @@
 
 class View{
 public:
+    class OnTransitionEndCallback{
+        virtual void onTransitionEnd() = 0;
+    };
+
+public:
     View(Vector2 outOfViewPos, Vector2 inViewPos, Vector2 size);
     virtual ~View();
 
@@ -18,6 +23,9 @@ public:
     void show();
     void hide();
     const bool isVisible() const;
+    void setVisible(bool visible);
+
+    const bool isInTransition() const;
 protected:
     Vector2 m_size;
     Vector2 m_currentPos;
