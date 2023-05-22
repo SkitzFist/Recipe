@@ -70,7 +70,7 @@ void InputField::handleCarrotOffset(){
 }
 
 const bool InputField::canMoveCarrot(int pos) const{
-    return pos >= 0 && pos < m_text.size();
+    return pos >= 0 && pos < (int)m_text.size();
 }
 
 void InputField::handleTextInput(){
@@ -186,8 +186,8 @@ void InputField::handleMarkText(){
         float percentageX = deltaX / textSize.x;
         int index = static_cast<int>(percentageX * m_text.size());
         
-        if(index >= m_text.size()){
-            index = m_text.size() - 1;
+        if(index >= (int)m_text.size()){
+            index = (int)m_text.size() - 1;
         }else if(index < 0){
             index = 0;
         }
@@ -203,7 +203,7 @@ void InputField::handleMarkText(){
         std::string str = m_text.substr(m_markTextIndexes.x, (m_markTextIndexes.y - m_markTextIndexes.x) + 1);
         
         std::size_t charIndex = str.find("|");
-        while (charIndex != -1)
+        while ((int)charIndex != -1)
         {
             str.erase(charIndex, 1);
             charIndex = str.find("|");
@@ -272,7 +272,7 @@ void InputField::placeCarrotAt(int index){
 
 void InputField::removeCarrot(){
     std::size_t index = m_text.find("|");
-    while (index != -1){
+    while ((int)index != -1){
         m_text.erase(index, 1);
         index = m_text.find("|");
     }

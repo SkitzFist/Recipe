@@ -21,6 +21,6 @@ void AddRecipeView::update(const float dt){
 
 void AddRecipeView::render() const{
     BeginBlendMode(BLEND_ADDITIVE);
-    DrawRectangle(m_currentPos.x, m_currentPos.y, size.x, size.y, VIEW_BACKGROUND_BLUR);  
+    DrawRectangle(m_currentPos.x, m_currentPos.y, size.x, size.y, Settings::VIEW_BACKGROUND_COLOR);  
     EndBlendMode();
 }

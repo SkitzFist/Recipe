@@ -54,10 +54,10 @@ public:
         //draw button
         if(m_isHovering){
             Rectangle rec{ m_pos.x, m_pos.y, m_expandedSize.x, m_expandedSize.y};
-            DrawRectangleRounded(rec, roundness, segments, BUTTON_HOVER_COLOR);
+            DrawRectangleRounded(rec, roundness, segments, Settings::BUTTON_HOVER_COLOR);
         }else{
             Rectangle rec = {m_pos.x, m_pos.y, m_collapsedSize.x, m_collapsedSize.y};
-            DrawRectangleRounded(rec, roundness, segments, BUTTON_COLOR);
+            DrawRectangleRounded(rec, roundness, segments, Settings::BUTTON_COLOR);
         }
 
         //draw text
@@ -73,7 +73,7 @@ public:
         Font font = GetFontDefault();
         float posX = (m_pos.x + (size.x/2.f)) - (MeasureTextEx(font, text.c_str(), fontSize, 2.0f).x/2.f);
         float posY = (m_pos.y + (size.y/2.f)) - (MeasureTextEx(font, text.c_str(), fontSize, 2.0).y/2.f);
-        DrawTextEx(font, text.c_str(), Vector2{posX, posY}, fontSize, 2.0, BUTTON_TEXT_COLOR);
+        DrawTextEx(font, text.c_str(), Vector2{posX, posY}, fontSize, 2.0, Settings::BUTTON_TEXT_COLOR);
     }
 
     virtual const Vector2& getSize() const override { return m_collapsedSize; }

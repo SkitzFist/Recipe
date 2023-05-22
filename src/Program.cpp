@@ -10,7 +10,7 @@ Program::Program(EventBus* eventBus) :
     EventHandler<ToggelAddRecipeViewEvent>(getNewId()){
     InitWindow(Settings::WIDTH, Settings::HEIGHT, "Recipe");
     SetWindowPosition(GetScreenWidth(), 25.f);
-    SetTargetFPS(60);
+    SetTargetFPS(144);
     SetExitKey(KEY_ESCAPE);
     
     Vector2 viewButtonSize = {50, 50};
@@ -61,7 +61,7 @@ void Program::update(float dt){
 
 void Program::render() const{
     BeginDrawing();
-    ClearBackground(BACKGROUND_COLOR);
+    ClearBackground(Settings::BACKGROUND_COLOR);
         for(const ViewGroup& group : m_viewGroups){
             if(group.view->isVisible() || group.view->isInTransition()){
                 group.view->render();
@@ -73,7 +73,7 @@ void Program::render() const{
 }
 
 const int Program::getViewGroupIndex(ViewType type) const{
-    for(int i = 0; i < m_viewGroups.size(); ++i){
+    for(unsigned int i = 0; i < m_viewGroups.size(); ++i){
         if(m_viewGroups[i].type == type){
             return i;
         }
