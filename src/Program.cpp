@@ -16,7 +16,7 @@ Program::Program(EventBus* eventBus) :
     Vector2 viewButtonSize = {50, 50};
     Vector2 viewButtonPos = {20.f, Settings::HEIGHT / 2.f};
     m_viewGroups.emplace_back(
-        std::make_unique<AddRecipeView>(),
+        std::make_unique<AddRecipeView>(eventBus),
         std::make_unique<ExpandingButton<ToggelAddRecipeViewEvent>>(viewButtonSize, eventBus, "Add recipe", viewButtonPos),
         ADD_STATE
     );

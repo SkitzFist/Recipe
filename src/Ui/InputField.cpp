@@ -25,9 +25,12 @@ InputField::~InputField(){
 void InputField::handleInput(){
 
     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+        Log::info("Pos: " + std::to_string(m_pos.x) + ":" + std::to_string(m_pos.y));
         if(isColliding(GetMousePosition(), m_pos, m_size)){
+            Log::info("IsColliding");
             onFocus();
         }else{
+            Log::info("Is not colliding");
             onBlur();
         }
     }
@@ -287,8 +290,9 @@ void InputField::render() const{
     }else{
         DrawRectangle(m_pos.x, m_pos.y, m_size.x, m_size.y, INPUT_BACKGROUND_COLOR);
     }
+    
     DrawRectangle(m_textMarkerBox.pos.x, getTextPos().y, m_textMarkerBox.size.x, m_textMarkerBox.size.y, SKYBLUE);
-    DrawTextEx(GetFontDefault(), m_text.c_str(), getTextPos(), m_fontSize, 2.0, INPUT_TEXT_COLOR);
+    DrawTextEx(GetFontDefault(), m_text.c_str(), getTextPos(), m_fontSize, 2.0, BLACK);
 }
 
 void InputField::onFocus(){
