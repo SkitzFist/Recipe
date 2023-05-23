@@ -30,7 +30,7 @@ Program::~Program(){
 void Program::run(){
     while (!WindowShouldClose())
     {
-        float dt = m_frameTimer.getElapsed();
+        float dt = m_frameTimer.getElapsed() / 1000;
         m_frameTimer.reset();
         handleInput();
         update(dt);    

@@ -25,12 +25,9 @@ InputField::~InputField(){
 void InputField::handleInput(){
 
     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-        Log::info("Pos: " + std::to_string(m_pos.x) + ":" + std::to_string(m_pos.y));
         if(isColliding(GetMousePosition(), m_pos, m_size)){
-            Log::info("IsColliding");
             onFocus();
         }else{
-            Log::info("Is not colliding");
             onBlur();
         }
     }
