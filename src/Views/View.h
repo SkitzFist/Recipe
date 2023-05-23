@@ -3,7 +3,7 @@
 
 #include "Timer.hpp"
 #include "raylib.h"
-
+#include "Ui/InputField.hpp"
 
 class View{
 public:
@@ -12,7 +12,7 @@ public:
     };
 
 public:
-    View(Vector2 outOfViewPos, Vector2 inViewPos, Vector2 size);
+    View(const Vector2& outOfViewPos, const Vector2& inViewPos, const Vector2& size);
     virtual ~View();
 
     virtual void handleInput() = 0;
@@ -29,6 +29,21 @@ public:
 protected:
     Vector2 m_size;
     Vector2 m_currentPos;
+
+protected:    
+    struct InputGroup{
+        InputField* inputField;
+        std::string title;
+
+        InputGroup(InputField* _inputField, const std::string& _title):
+            inputField(_inputField), title(_title)
+        {}
+
+        ~InputGroup(){
+            delete inputField;
+        }
+
+    };
 private:
     Vector2 m_outOfViewPos;
     Vector2 m_inViewPos;

@@ -9,19 +9,28 @@
 #include "Ui/UiButton.hpp"
 #include "EventHandler.hpp"
 
-class Program : public EventHandler<ToggelAddRecipeViewEvent>{
+#include "Array.hpp"
+
+class Program : public EventHandler<ToggelAddRecipeViewEvent>, public EventHandler<ToggelModifyRecipeViewEvent>{
 public:
     enum ViewType{
-        ADD_STATE   
+        ADD_VIEW,
+        MODIFY_VIEW   
     };
 
     class ViewGroup{
     public:
-        std::unique_ptr<View> view;
-        std::unique_ptr<UiButton> button;
+        View* view;
+        UiButton* button;
         ViewType type;
-        ViewGroup(std::unique_ptr<View> _view, std::unique_ptr<UiButton> _button, ViewType _type)
-            :view(std::move(_view)), button(std::move(_button)), type(_type){}
+        ViewGroup(View* _view, UiButton* _button, ViewType _type)
+            :view(_view), button(_button), type(_type)
+        {}
+
+        ~ViewGroup(){
+            delete view;
+            delete button;
+        }        
     };
 
 public:
@@ -32,6 +41,7 @@ public:
     //////////////////////////////////////////////////////
     ///Event Handlers/////////////////////////////////////                                  
     void onEvent(const ToggelAddRecipeViewEvent& event);
+    void onEvent(const ToggelModifyRecipeViewEvent& event);
     /////////////////////////////////////////////////////
 
 private:
@@ -41,8 +51,11 @@ private:
     void update(float dt);
     void render() const;
 
-    const int getViewGroupIndex(ViewType type) const;
-    std::vector<ViewGroup> m_viewGroups;
+    Array<ViewGroup*> m_viewGroups;
+    ViewGroup* getViewGroup(ViewType type) const; 
+
+    ///Event
+    void toggleView(ViewType type);
 };
 
 #endif

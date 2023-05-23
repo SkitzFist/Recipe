@@ -4,7 +4,7 @@
 //Debug
 #include "Log.hpp"
 
-View::View(Vector2 outOfViewPos, Vector2 inViewPos, Vector2 size):
+View::View(const Vector2& outOfViewPos, const Vector2& inViewPos, const Vector2& size):
     m_size(size), m_currentPos(outOfViewPos), m_outOfViewPos(outOfViewPos), m_inViewPos(inViewPos),
     m_isVisible(false), m_transitionTimer(800), m_isInTransition(false), m_transitionShow(true){
 }

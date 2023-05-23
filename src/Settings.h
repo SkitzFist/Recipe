@@ -6,11 +6,13 @@
 namespace Settings{
     inline constexpr const int WIDTH = (1920/2);
     inline constexpr const int HEIGHT = 1080 - 80;
-    inline constexpr const int X_ALIGNMENT = HEIGHT * 0.1f;
 
-    //----------------------------------------------------------------------------------
-    // Colors
-    //----------------------------------------------------------------------------------   
+    // View
+        inline constexpr const Vector2 BIG_PANEL_SIZE{WIDTH * 0.8f, HEIGHT * 0.8f};
+        inline constexpr const int VIEW_X_ALIGNMENT = HEIGHT * 0.1f;
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    //                        COLORS  
         //General
         inline constexpr const Color BACKGROUND_COLOR = {40, 40, 40, 255};
         inline constexpr const Color Title = {144, 238, 144, 255};
@@ -22,6 +24,7 @@ namespace Settings{
         inline constexpr const Color BUTTON_COLOR = {30, 144, 255, 255};
         inline constexpr const Color BUTTON_HOVER_COLOR = {0, 191, 255, 255};
         inline constexpr const Color BUTTON_TEXT_COLOR = {255, 255, 255, 255};
+    //////////////////////////////////////////////////////////////////////////////////////
 
     
     //todo make inline

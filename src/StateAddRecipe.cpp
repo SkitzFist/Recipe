@@ -282,7 +282,7 @@ const bool StateAddRecipe::isValidEntry(const std::string& str) const{
 
 ///////////////////////
 ///SearchFoundEvent///
-/////////////////////
+    /////////////////////
 
 void StateAddRecipe::onEvent(const SearchFoundEvent& event){
     int nameInputIndex = getInputIndex("Name");

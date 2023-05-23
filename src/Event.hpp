@@ -14,8 +14,9 @@ struct Recipe
 class Event{};
 
 class ToggelAddRecipeViewEvent : Event{};
+class ToggelModifyRecipeViewEvent : Event{};
 
-class PrepareAddRecipeEvent : Event{};
+class PrepareAddRecipeEvent : public Event{};
 class AddRecipeEvent : Event{
 public:
     Recipe recipe;
