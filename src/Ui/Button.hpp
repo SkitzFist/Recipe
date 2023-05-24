@@ -49,6 +49,9 @@ private:
         
 }
 
+Button::~Button(){
+    delete EVENT;
+}
 
 void Button::handleInput(){
     if (!m_visible)

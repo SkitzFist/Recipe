@@ -6,8 +6,9 @@
 
 #include "View.h"
 
-#include "Array.hpp"
 #include "Settings.h"
+#include "Ui/UiButton.hpp"
+#include "TabCycling.h"
 
 class AddRecipeView : public View{
 public:
@@ -20,8 +21,11 @@ public:
 
     void onAddRecipe();
 private:
-    Array<InputGroup*> m_inputGroups;
     float m_localXAlignment;
+    
+    Array<InputGroup*> m_inputGroups;
+    TabCycling m_tabCycling;
+    UiButton* m_addButton;
 };
 
 #endif

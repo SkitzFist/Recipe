@@ -1,6 +1,7 @@
 #include "AddRecipeView.h"
 
 #include "Settings.h"
+#include "Ui/Button.hpp"
 
 //debug
 #include "Log.hpp"
@@ -35,17 +36,30 @@ View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE), m_inputGroups(3){
         group->inputField->onSubmit.connect([ptr](){
             ptr->onAddRecipe();
         });
+        m_tabCycling.addInputField(group->inputField);
     }
+
+    m_addButton = new Button(m_currentPos, Vector2{inputFieldSize.x / 2.f,50}, "Add");
 }
 
 AddRecipeView::~AddRecipeView(){
     m_inputGroups.clear();
+    delete m_addButton;
 }
 
 void AddRecipeView::handleInput(){
+    
+    if(!isVisible()){
+        return;
+    }
+
+    m_tabCycling.handleInput();
+
     for(InputGroup* group : m_inputGroups){
         group->inputField->handleInput();
     }
+
+    m_addButton->handleInput();
 }
 
 void AddRecipeView::update(const float dt){
@@ -62,7 +76,15 @@ void AddRecipeView::render() const{
         Settings::BIG_PANEL_SIZE.y, Settings::VIEW_BACKGROUND_COLOR);  
     EndBlendMode();
 
-    float nextYPos = m_size.y * 0.2f;
+    int titleFontSize = GetFontDefault().baseSize * 5;
+    Vector2 textSize = MeasureTextEx(GetFontDefault(), "Add Recipe", titleFontSize, 2.f);
+    Vector2 titlePos = {
+        m_currentPos.x + (m_size.x / 2.f) - (textSize.x / 2.f),
+        m_currentPos.y + (m_size.y * 0.05f)
+    };
+    DrawText("Add Recipe", titlePos.x, titlePos.y, titleFontSize, Settings::BUTTON_TEXT_COLOR);
+    
+    float nextYPos = m_size.y * 0.3f;
     for(const InputGroup* group : m_inputGroups){
         float fontSize = GetFontDefault().baseSize * 4.f;
         DrawTextEx(GetFontDefault(), group->title.c_str(), {m_currentPos.x + m_localXAlignment, nextYPos}, fontSize, 2.f, Settings::BUTTON_TEXT_COLOR);
@@ -72,6 +94,13 @@ void AddRecipeView::render() const{
         nextYPos += group->inputField->getSize().y + textSize.y;
         group->inputField->render();
     }
+
+    float buttonSpacing = m_size.y * 0.05f;
+    m_addButton->setPos(
+        m_currentPos.x + (m_addButton->getSize().x / 2.f),
+        m_currentPos.y + nextYPos + buttonSpacing
+    ),
+    m_addButton->render();
 }
 
 void AddRecipeView::onAddRecipe(){
