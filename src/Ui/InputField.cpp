@@ -142,7 +142,6 @@ void InputField::handleRemoveBackward(){
     }
 
     if(IsKeyPressed(KEY_ENTER)){
-        Log::info("Fire event");
         m_eventBus->fireEvent(*m_event);
     }
 }

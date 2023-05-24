@@ -1,8 +1,9 @@
 #include "AddRecipeView.h"
 
+#include "Settings.h"
+
 //debug
 #include "Log.hpp"
-#include "Settings.h"
 
 AddRecipeView::AddRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos, EventBus* eventBus):
 View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE), m_inputGroups(3){

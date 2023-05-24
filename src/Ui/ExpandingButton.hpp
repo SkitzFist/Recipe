@@ -1,5 +1,5 @@
-#ifndef _Button
-#define _Buttonm_smallSize
+#ifndef _ExpandingButton
+#define _ExpandingButton
 
 #include "EventBus.hpp"
 #include "UiButton.hpp"
@@ -47,9 +47,7 @@ public:
             return;
         }
         float roundness = 1.0f;
-        int segments = 512;
-
-        
+            int segments = 256;
 
         //draw button
         if(m_isHovering){

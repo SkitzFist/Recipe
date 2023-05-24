@@ -3,13 +3,12 @@
 
 #include <memory>
 
-#include "EventBus.hpp"
+#include "EventHandler.hpp"
+#include "Array.hpp"
 #include "Timer.hpp"
 #include "Views/view.h"
 #include "Ui/UiButton.hpp"
-#include "EventHandler.hpp"
 
-#include "Array.hpp"
 
 class Program : public EventHandler<ToggelAddRecipeViewEvent>, public EventHandler<ToggelModifyRecipeViewEvent>{
 public:

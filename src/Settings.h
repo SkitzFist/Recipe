@@ -9,7 +9,7 @@ namespace Settings{
 
     // View
         inline constexpr const Vector2 BIG_PANEL_SIZE{WIDTH * 0.8f, HEIGHT * 0.8f};
-        inline constexpr const int VIEW_X_ALIGNMENT = HEIGHT * 0.1f;
+        inline constexpr const int VIEW_X_ALIGNMENT = WIDTH * 0.1f;
 
     ////////////////////////////////////////////////////////////////////////////////////
     //                        COLORS  
