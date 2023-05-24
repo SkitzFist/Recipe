@@ -23,7 +23,6 @@ public:
     }
     void setVisible(bool visible){m_visible = visible;}
     const bool isVisible() const {return m_visible;}
-    
 protected:
     bool m_visible = true;
 

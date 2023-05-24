@@ -2,7 +2,6 @@
 #define _Program
 
 #include <memory>
-
 #include "Array.hpp"
 #include "Timer.hpp"
 #include "Views/view.h"
