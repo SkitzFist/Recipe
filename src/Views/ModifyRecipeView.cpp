@@ -1,7 +1,7 @@
 #include "ModifyRecipeView.h"
 
-ModifyRecipeView::ModifyRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos, EventBus* eventBus) :
-    View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE) ,m_eventBus(eventBus){
+ModifyRecipeView::ModifyRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos) :
+    View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE){
     
 }
 

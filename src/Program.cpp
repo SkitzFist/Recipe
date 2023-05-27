@@ -9,8 +9,7 @@
 #include "Ui/ExpandingButton.hpp"
 
 
-Program::Program(EventBus* eventBus) : 
-    EventHandler<ToggelAddRecipeViewEvent>(getNewId()), EventHandler<ToggelModifyRecipeViewEvent>(getNewId()){
+Program::Program(){
     InitWindow(Settings::WIDTH, Settings::HEIGHT, "Recipe");
     SetWindowPosition(GetScreenWidth(), 25.f);
     SetTargetFPS(144);
@@ -23,8 +22,8 @@ Program::Program(EventBus* eventBus) :
     Vector2 viewButtonSize = {50, 50};
     Vector2 viewButtonPos = {20.f, Settings::HEIGHT / 2.f};
     m_viewGroups.add(new ViewGroup(
-        new AddRecipeView (outOfViewPos, inViewPos, eventBus),
-        new ExpandingButton<ToggelAddRecipeViewEvent>(viewButtonSize, eventBus, "Add recipe", viewButtonPos),
+        new AddRecipeView (outOfViewPos, inViewPos),
+        new ExpandingButton(viewButtonSize, "Add recipe", viewButtonPos),
         ADD_VIEW
     ));
 
@@ -35,13 +34,10 @@ Program::Program(EventBus* eventBus) :
     outOfViewPos = {Settings::WIDTH + Settings::BIG_PANEL_SIZE.x, inViewPos.y};
 
     m_viewGroups.add(new ViewGroup(
-        new ModifyRecipeView(outOfViewPos, inViewPos, eventBus),
-        new ExpandingButton<ToggelModifyRecipeViewEvent>(viewButtonSize, eventBus,"Modify Recipe", Vector2{viewButtonPos.x, viewButtonPos.y + (viewButtonSize.y * 1.5f)}),
+        new ModifyRecipeView(outOfViewPos, inViewPos),
+        new ExpandingButton(viewButtonSize,"Modify Recipe", Vector2{viewButtonPos.x, viewButtonPos.y + (viewButtonSize.y * 1.5f)}),
         MODIFY_VIEW
     ));
-
-    eventBus->registerHandler<ToggelAddRecipeViewEvent>(this);
-    eventBus->registerHandler<ToggelModifyRecipeViewEvent>(this);
 }
 
 Program::~Program(){
@@ -100,28 +96,4 @@ Program::ViewGroup* Program::getViewGroup(ViewType type)const{
         }
     }
     return nullptr;
-}
-
-//////////////////////////////////////////////////////////////
-///                  EVENTS                               ///
-////////////////////////////////////////////////////////////
-
-void Program::toggleView(ViewType type){
-    ViewGroup* group = getViewGroup(type);
-    if(group == nullptr) return;
-    
-    for(ViewGroup* group : m_viewGroups){
-        if(group->view->isVisible()){
-            group->view->hide();
-        }
-    }; 
-    group->view->toggleVisibility();
-}
-
-void Program::onEvent(const ToggelAddRecipeViewEvent& event){
-    toggleView(ADD_VIEW);
-}
-
-void Program::onEvent(const ToggelModifyRecipeViewEvent& event){
-    toggleView(MODIFY_VIEW);
 }

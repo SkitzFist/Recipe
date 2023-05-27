@@ -11,7 +11,7 @@
 
 class AddRecipeView : public View{
 public:
-    AddRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos, EventBus* eventBus);
+    AddRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos);
     virtual ~AddRecipeView();
 
     virtual void handleInput() override;

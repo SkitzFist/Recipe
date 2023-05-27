@@ -21,15 +21,6 @@ public:
     }
     void setVisible(bool visible){m_visible = visible;}
     const bool isVisible() const {return m_visible;}
-
-    int shrinkFontToFit(const std::string& text, int fontSize){
-        Vector2 textSize = MeasureTextEx(GetFontDefault(), text.c_str(), fontSize, 2.f);
-        while (textSize.x >= m_collapsedSize.x || textSize.y >= m_collapsedSize.y)
-        {
-            fontSize *= 0.95;
-            textSize = MeasureTextEx(GetFontDefault(), text.substr(0, 1).c_str(), fontSize, 2.f);
-        }
-    }
     
 protected:
     bool m_visible = true;

@@ -128,11 +128,11 @@ T& Array<T>::operator[](unsigned int _index){
 template <class T>
 void Array<T>::clear(){
     if constexpr (std::is_pointer_v<T>) {
-        for (int i = 0; i < m_size; ++i) {
+        for (unsigned int i = 0; i < m_size; ++i) {
             delete m_data[i];
         }
     } else {
-        for (int i = 0; i < m_size; ++i) {
+        for (unsigned int i = 0; i < m_size; ++i) {
             m_data[i].~T();
         }
     }
@@ -145,11 +145,11 @@ template <class T>
 void Array<T>::reallocate(unsigned int _newCapacity){
     T* tmp = (T*)::operator new(_newCapacity * sizeof(T));
 
-    for(int i = 0; i < m_size; ++i){
+    for(unsigned int i = 0; i < m_size; ++i){
         tmp[i] = std::move(m_data[i]);
     }
 
-    for(int i = 0; i < m_size; ++i){
+    for(unsigned int i = 0; i < m_size; ++i){
         m_data[i].~T();
     }
 
