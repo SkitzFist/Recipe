@@ -26,6 +26,8 @@ private:
     Array<InputGroup*> m_inputGroups;
     TabCycling m_tabCycling;
     UiButton* m_addButton;
+
+    bool allInputFieldHasValidInput();
 };
 
 #endif

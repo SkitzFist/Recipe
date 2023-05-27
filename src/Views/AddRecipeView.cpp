@@ -2,6 +2,7 @@
 
 #include "Settings.h"
 #include "Ui/Button.hpp"
+#include "Recipe.hpp"
 
 //debug
 #include "Log.hpp"
@@ -48,7 +49,7 @@ AddRecipeView::~AddRecipeView(){
 }
 
 void AddRecipeView::handleInput(){
-    
+
     if(!isVisible()){
         return;
     }
@@ -104,6 +105,32 @@ void AddRecipeView::render() const{
 }
 
 void AddRecipeView::onAddRecipe(){
-    //send with eventBus to database
-    Log::info("onAddRecipe");
+    if (!allInputFieldHasValidInput())
+    {
+        // TODO add messageView
+        return;
+    }
+
+    Recipe recipe;
+    recipe.name = m_inputGroups[0]->inputField->getText();
+    recipe.reference = m_inputGroups[1]->inputField->getText();
+    recipe.tags = m_inputGroups[2]->inputField->getText();
+
+    for (InputGroup *group : m_inputGroups)
+    {
+        group->inputField->clear();
+    }
+}
+
+bool AddRecipeView::allInputFieldHasValidInput()
+{
+    for (InputGroup *group : m_inputGroups)
+    {
+        std::string text = group->inputField->getText();
+        if (text.empty() || (!(text.find_first_not_of(' ') != std::string::npos)))
+        {
+            return false;
+        }
+    }
+    return true;
 }

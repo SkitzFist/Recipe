@@ -42,7 +42,9 @@ public:
 
     template <class EventType>
     void fireEvent(const EventType& event){
+        Log::info(typeid(EventType).name());
         if(!eventTypeExists(typeid(EventType))){
+            Log::info("returning");
             return;
         }
         
