@@ -1,15 +1,13 @@
 #ifndef _ExpandingButton
 #define _ExpandingButton
 
-#include "EventBus.hpp"
 #include "UiButton.hpp"
 #include "Collision.h"
 
-template <class EventType>
 class ExpandingButton : public UiButton{
 public:
-    ExpandingButton(Vector2 size, EventBus* eventBus, const std::string& text, Vector2 pos = Vector2{0.f,0.f}):
-        m_pos(pos), m_collapsedSize(size), m_expandedSize{0.f,0.f},m_text(text), m_eventBus(eventBus), m_isHovering(false){
+    ExpandingButton(Vector2 size, const std::string& text, Vector2 pos = Vector2{0.f,0.f}):
+        m_pos(pos), m_collapsedSize(size), m_expandedSize{0.f,0.f},m_text(text), m_isHovering(false){
             fontSize = GetFontDefault().baseSize * 4;
 
             Vector2 textSize = MeasureTextEx(GetFontDefault(), text.substr(0,1).c_str(), fontSize, 2.f);
@@ -35,7 +33,7 @@ public:
         if(isColliding(mousePos, m_pos, m_collapsedSize)){
             m_isHovering = true;
             if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-                m_eventBus->fireEvent(EventType());
+                onClick.emit();
             }
         }else{
             m_isHovering = false;
@@ -87,7 +85,6 @@ private:
     Vector2 m_collapsedSize;
     Vector2 m_expandedSize;
     std::string m_text;
-    EventBus* m_eventBus;
     bool m_isHovering;
 };
 

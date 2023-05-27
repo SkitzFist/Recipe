@@ -4,11 +4,10 @@
 #include "View.h"
 
 #include "Settings.h"
-#include "EventBus.hpp"
 
 class ModifyRecipeView : public View{
 public:
-    ModifyRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos, EventBus* eventBus);
+    ModifyRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos);
     ~ModifyRecipeView();
 
     /////////////////////////////
@@ -18,7 +17,6 @@ public:
     virtual void render() const override;
     ///////////////////////////
 private:
-    EventBus* m_eventBus;
 
 };
 

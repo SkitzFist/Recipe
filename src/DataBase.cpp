@@ -28,9 +28,7 @@ int DataBase::getRowsCallback(void *data, int argc, char** argv, char** azColNam
     return 0;
 }
 
-DataBase::DataBase(EventBus* eventBus) :
-    EventHandler<AddRecipeEvent>(getNewId()), EventHandler<SearchRecipeEvent>(getNewId()), 
-        EventHandler<ModifyRecipeEvent>(getNewId()), FILE_NAME("recipe.db"), m_eventBus(eventBus){
+DataBase::DataBase() : FILE_NAME("recipe.db"){
     
     std::filesystem::path path{FILE_NAME};
     if(!std::filesystem::exists(path)){
@@ -42,10 +40,6 @@ DataBase::DataBase(EventBus* eventBus) :
         sqlite3_open(FILE_NAME.c_str(), &m_db);
         setRecipeID();
     }
-
-    m_eventBus->registerHandler<AddRecipeEvent>(this);
-    m_eventBus->registerHandler<SearchRecipeEvent>(this);
-    m_eventBus->registerHandler<ModifyRecipeEvent>(this);
 }
 
 DataBase::~DataBase(){
@@ -157,31 +151,4 @@ bool DataBase::executeSQL(const std::string& _query, int(*callback)(void*, int, 
     }
 
     return true;
-}
-
-////////////////////////////////////////////////////
-/// EventHandlers                               ///
-//////////////////////////////////////////////////
-
-void DataBase::onEvent(const AddRecipeEvent& event){
-    insertRecipe(event.recipe);
-}
-
-void DataBase::onEvent(const SearchRecipeEvent& event){
-    bool success = searchRecipe(toLower(event.recipeName));
-    if(success){
-        m_eventBus->fireEvent(SearchFoundEvent(m_selectedRecipes[0]));
-    }else{
-        //Todo
-        //Look for similar
-        //if found, send searchSuggestionEvent
-    }
-}
-
-void DataBase::onEvent(const ModifyRecipeEvent& event){
-    if(updateRecipe(event.recipe)){
-        Log::info("Recipe updated");
-    }else{
-        Log::info("Not updated");
-    }
 }

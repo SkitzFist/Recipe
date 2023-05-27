@@ -5,7 +5,7 @@
 //debug
 #include "Log.hpp"
 
-AddRecipeView::AddRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos, EventBus* eventBus):
+AddRecipeView::AddRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos):
 View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE), m_inputGroups(3){
 
     Vector2 inputFieldSize = {
@@ -16,22 +16,25 @@ View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE), m_inputGroups(3){
     m_localXAlignment = (Settings::BIG_PANEL_SIZE.x / 2.f) - (inputFieldSize.x / 2.f);
 
     m_inputGroups.add(new InputGroup(
-        new InputField(inputFieldSize, eventBus),
+        new InputField(inputFieldSize),
         "Name"
     ));
 
     m_inputGroups.add(new InputGroup(
-        new InputField(inputFieldSize, eventBus),
+        new InputField(inputFieldSize),
         "Reference"
     ));
     
     m_inputGroups.add(new InputGroup(
-        new InputField(inputFieldSize, eventBus),
+        new InputField(inputFieldSize),
         "Tags"
     ));
-
-    for(int i = 0; i < m_inputGroups.size(); ++i){
-        m_inputGroups[i]->inputField->setEvent(new PrepareAddRecipeEvent());
+    
+    AddRecipeView* ptr = this;
+    for(InputGroup* group : m_inputGroups){
+        group->inputField->onSubmit.connect([ptr](){
+            ptr->onAddRecipe();
+        });
     }
 }
 
@@ -69,4 +72,9 @@ void AddRecipeView::render() const{
         nextYPos += group->inputField->getSize().y + textSize.y;
         group->inputField->render();
     }
+}
+
+void AddRecipeView::onAddRecipe(){
+    //send with eventBus to database
+    Log::info("onAddRecipe");
 }

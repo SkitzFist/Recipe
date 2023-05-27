@@ -2,9 +2,11 @@
 #define _InputField
 
 #include <string>
-#include "EventBus.hpp"
+
+#include "Transmission/Signal.hpp"
 
 #include "raylib.h"
+
 
 typedef struct Vector2i{ //todo, move this
     int x;
@@ -19,7 +21,7 @@ struct TextMarkerBox{
 
 class InputField{
 public:
-    InputField(Vector2 size, EventBus* eventBus);
+    InputField(Vector2 size);
     ~InputField();
     void handleInput();
     void update(float dt);
@@ -36,10 +38,8 @@ public:
     void setText(const std::string& text);
     const std::string& getText();
     void clear();
-    void* eventHandle;
-
-    void setEvent(Event* event);
-
+    Signal<> onSubmit;
+    
 private:
     Vector2 m_pos;
     Vector2 m_size;
@@ -73,10 +73,6 @@ private:
     TextMarkerBox m_textMarkerBox;
     void handleMarkText();
     void clearMarkText();
-
-    EventBus* m_eventBus;
-
-    Event* m_event;
 };  
 
 #endif

@@ -3,14 +3,13 @@
 
 #include <memory>
 
-#include "EventHandler.hpp"
 #include "Array.hpp"
 #include "Timer.hpp"
 #include "Views/view.h"
 #include "Ui/UiButton.hpp"
 
 
-class Program : public EventHandler<ToggelAddRecipeViewEvent>, public EventHandler<ToggelModifyRecipeViewEvent>{
+class Program{
 public:
     enum ViewType{
         ADD_VIEW,
@@ -33,15 +32,10 @@ public:
     };
 
 public:
-    Program(EventBus* eventBus);
+    Program();
     ~Program();
     void run();
-
-    //////////////////////////////////////////////////////
-    ///Event Handlers/////////////////////////////////////                                  
-    void onEvent(const ToggelAddRecipeViewEvent& event);
-    void onEvent(const ToggelModifyRecipeViewEvent& event);
-    /////////////////////////////////////////////////////
+    void toggleView(ViewType type);
 
 private:
     Timer m_frameTimer;
@@ -52,9 +46,6 @@ private:
 
     Array<ViewGroup*> m_viewGroups;
     ViewGroup* getViewGroup(ViewType type) const; 
-
-    ///Event
-    void toggleView(ViewType type);
 };
 
 #endif

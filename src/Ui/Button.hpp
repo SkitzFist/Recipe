@@ -4,12 +4,13 @@
 #include "Ui/UiButton.hpp"
 
 #include "Settings.h"
-#include "Event.hpp"
+#include "Signal.hpp"
 
 class Button : public UiButton{
+
 public:
 
-    Button(Vector2 pos, Vector2 size, const std::string& text, Event* event);
+    Button(Vector2 pos, Vector2 size, const std::string& text);
     ~Button();
 
     ///////////////////////////////////////////////////
@@ -30,17 +31,10 @@ private:
     std::string m_text;
 
     bool m_isHovering;
-
-    Event* EVENT;
 };
 
-
-
-
-
-
- Button::Button(Vector2 pos, Vector2 size, const std::string& text, Event* event): 
-    m_pos(pos), m_size(size), m_text(text), m_isHovering(false), EVENT(event){
+ Button::Button(Vector2 pos, Vector2 size, const std::string& text): 
+    m_pos(pos), m_size(size), m_text(text), m_isHovering(false){
 
     }
 
