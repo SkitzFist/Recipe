@@ -29,7 +29,13 @@ View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE), m_inputGroups(3){
         new InputField(inputFieldSize),
         "Tags"
     ));
-
+    
+    AddRecipeView* ptr = this;
+    for(InputGroup* group : m_inputGroups){
+        group->inputField->onSubmit.connect([ptr](){
+            ptr->onAddRecipe();
+        });
+    }
 }
 
 AddRecipeView::~AddRecipeView(){
@@ -66,4 +72,9 @@ void AddRecipeView::render() const{
         nextYPos += group->inputField->getSize().y + textSize.y;
         group->inputField->render();
     }
+}
+
+void AddRecipeView::onAddRecipe(){
+    //send with eventBus to database
+    Log::info("onAddRecipe");
 }

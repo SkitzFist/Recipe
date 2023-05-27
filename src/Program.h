@@ -35,6 +35,7 @@ public:
     Program();
     ~Program();
     void run();
+    void toggleView(ViewType type);
 
 private:
     Timer m_frameTimer;

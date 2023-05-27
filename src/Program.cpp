@@ -8,7 +8,6 @@
 
 #include "Ui/ExpandingButton.hpp"
 
-
 Program::Program(){
     InitWindow(Settings::WIDTH, Settings::HEIGHT, "Recipe");
     SetWindowPosition(GetScreenWidth(), 25.f);
@@ -21,6 +20,8 @@ Program::Program(){
     Vector2 outOfViewPos = {0 - Settings::BIG_PANEL_SIZE.x - 10.f, inViewPos.y};
     Vector2 viewButtonSize = {50, 50};
     Vector2 viewButtonPos = {20.f, Settings::HEIGHT / 2.f};
+
+    
     m_viewGroups.add(new ViewGroup(
         new AddRecipeView (outOfViewPos, inViewPos),
         new ExpandingButton(viewButtonSize, "Add recipe", viewButtonPos),
@@ -38,6 +39,15 @@ Program::Program(){
         new ExpandingButton(viewButtonSize,"Modify Recipe", Vector2{viewButtonPos.x, viewButtonPos.y + (viewButtonSize.y * 1.5f)}),
         MODIFY_VIEW
     ));
+
+    Program* ptr = this;
+    for(ViewGroup* group : m_viewGroups){
+    
+        group->button->onClick.connect([ptr, group](){
+            ptr->toggleView(group->type);
+        });
+    }
+
 }
 
 Program::~Program(){
@@ -96,4 +106,13 @@ Program::ViewGroup* Program::getViewGroup(ViewType type)const{
         }
     }
     return nullptr;
+}
+
+void Program::toggleView(ViewType type){
+    for(ViewGroup* group : m_viewGroups){
+        if(group->type == type)
+            group->view->show();
+        else
+            group->view->hide();   
+    }
 }

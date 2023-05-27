@@ -33,7 +33,7 @@ public:
         if(isColliding(mousePos, m_pos, m_collapsedSize)){
             m_isHovering = true;
             if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-                //fire event
+                onClick.emit();
             }
         }else{
             m_isHovering = false;

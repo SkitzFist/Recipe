@@ -1,28 +1,12 @@
 #ifndef _DataBase
 #define _DataBase
 
-#include <string>
 #include <vector>
 
+#include "Recipe.hpp"
 #include "sqlite3.h"
 
 class DataBase{
-public:
-    struct Recipe
-    {
-        int id;
-        std::string name;
-        std::string reference;
-        std::string tags;
-
-        Recipe(int _id, const std::string &_name, const std::string &_reference, const std::string &_tags) : id(_id), name(_name), reference(_reference), tags(_tags) {}
-        Recipe(){
-            id = 0;
-            name = "";
-            reference = "";
-            tags = "";
-        }
-    };
 
 public:
     DataBase();

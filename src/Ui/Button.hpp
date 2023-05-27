@@ -4,8 +4,10 @@
 #include "Ui/UiButton.hpp"
 
 #include "Settings.h"
+#include "Signal.hpp"
 
 class Button : public UiButton{
+
 public:
 
     Button(Vector2 pos, Vector2 size, const std::string& text);

@@ -2,7 +2,11 @@
 #define _InputField
 
 #include <string>
+
+#include "Transmission/Signal.hpp"
+
 #include "raylib.h"
+
 
 typedef struct Vector2i{ //todo, move this
     int x;
@@ -34,8 +38,8 @@ public:
     void setText(const std::string& text);
     const std::string& getText();
     void clear();
-    void* eventHandle;
-
+    Signal<> onSubmit;
+    
 private:
     Vector2 m_pos;
     Vector2 m_size;

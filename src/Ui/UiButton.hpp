@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "Transmission/Signal.hpp"
 #include "raylib.h"
 
 class UiButton{
@@ -15,6 +16,7 @@ public:
     virtual void render() const = 0;
     virtual void setText(const std::string& text) = 0;
     virtual const std::string& getText() const = 0;
+    Signal<> onClick;
 
     void setPos(float x, float y){
         setPos(Vector2{x,y});

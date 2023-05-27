@@ -18,6 +18,7 @@ public:
     virtual void update(const float dt) override;
     virtual void render() const override;
 
+    void onAddRecipe();
 private:
     Array<InputGroup*> m_inputGroups;
     float m_localXAlignment;
