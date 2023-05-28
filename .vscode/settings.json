@@ -70,7 +70,30 @@
         "xhash": "cpp",
         "typeindex": "cpp",
         "unordered_map": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "functional": "cpp"
     },
+    "todohighlight.isEnable": true,
+    "todohighlight.keywords": [
+        "DEBUG:",
+        "REVIEW:",
+        {
+            "text": "NOTE:",
+            "color": "purple",
+            "backgroundColor": "purple",
+            "overviewRulerColor": "grey"
+        },
+        {
+            "text": "HACK:",
+            "color": "#000",
+            "isWholeLine": false,
+        },
+        {
+            "text": "TODO:",
+            "color": "grey",
+            "backgroundColor": "grey",
+            //other styling properties goes here ... 
+        }
+    ],
     "cmake.configureOnOpen": false
 }

@@ -1,20 +1,28 @@
 #ifndef _EventHandler
 #define _EventHandler
 
-#include "ID.hpp"
 #include "Event.hpp"
 
+class EventHandlerID{
+public:
+    int id;
+    EventHandlerID(int _id ) : id(_id){} 
+};
+
+inline int idCount;
+
 template <class T>
-class EventHandler : public ID
+class EventHandler : public EventHandlerID
 {
 public:
-    EventHandler(int id);
+    EventHandler();
     virtual void onEvent(const T &event) = 0;
     virtual ~EventHandler();
 };
 
-template <class T>
-EventHandler<T>::EventHandler(int _id) : ID(_id) {}
+
+template<class T>
+EventHandler<T>::EventHandler():EventHandlerID(++idCount){}
 
 template <class T>
 EventHandler<T>::~EventHandler() {}

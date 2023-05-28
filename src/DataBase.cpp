@@ -28,7 +28,7 @@ int DataBase::getRowsCallback(void *data, int argc, char** argv, char** azColNam
     return 0;
 }
 
-DataBase::DataBase() : FILE_NAME("recipe.db"){
+DataBase::DataBase(EventBus* eventBus) : EventHandler<AddRecipeEvent>(), m_eventBus(eventBus) ,FILE_NAME("recipe.db"){
     
     std::filesystem::path path{FILE_NAME};
     if(!std::filesystem::exists(path)){
@@ -40,6 +40,8 @@ DataBase::DataBase() : FILE_NAME("recipe.db"){
         sqlite3_open(FILE_NAME.c_str(), &m_db);
         setRecipeID();
     }
+
+    eventBus->registerHandler<AddRecipeEvent>(this); 
 }
 
 DataBase::~DataBase(){
@@ -151,4 +153,16 @@ bool DataBase::executeSQL(const std::string& _query, int(*callback)(void*, int, 
     }
 
     return true;
+}
+
+//////////////////////////////////////
+///       EventHandlers           ///
+////////////////////////////////////
+
+//addRecipe
+void DataBase::onEvent(const AddRecipeEvent& event){
+
+    insertRecipe(event.recipe);
+
+    ///m_eventBus->fireEvent(AddRecipeCallback(insertRecipe(event.recipe)));
 }

@@ -4,13 +4,6 @@
 #include <functional>
 #include <map>
 
-class ID
-{
-public:
-    virtual ~ID() = default;
-    virtual int getID() const = 0;
-};
-
 template <typename... Args>
 class Signal
 {

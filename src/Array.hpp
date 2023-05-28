@@ -1,9 +1,9 @@
-#pragma once
 #ifndef _Array
 #define _Array
 
 #include <utility>
 #include <type_traits>
+#include "Log.hpp"
 
 template <class T>
 class Array{
@@ -112,7 +112,12 @@ void Array<T>::remove(const int& _index){
     }
     m_data[_index].~T();
     m_data[_index] = m_data[--m_size];
-    m_data[m_size] = NULL;
+
+    if constexpr (std::is_pointer_v<T>){
+        m_data[m_size] = nullptr;
+    }else{
+        m_data[m_size] = NULL;
+    }
 }
 
 template <class T>
