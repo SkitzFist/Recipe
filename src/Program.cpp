@@ -121,6 +121,8 @@ void Program::toggleView(ViewType type){
         if(group->type == type)
             group->view->show();
         else
-            group->view->hide();   
+            if(group->view->isVisible()){
+                group->view->hide();
+            }
     }
 }
