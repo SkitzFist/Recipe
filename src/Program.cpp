@@ -8,7 +8,7 @@
 
 #include "Ui/ExpandingButton.hpp"
 
-Program::Program(){
+Program::Program(EventBus* eventBus){
     InitWindow(Settings::WIDTH, Settings::HEIGHT, "Recipe");
     SetWindowPosition(GetScreenWidth(), 25.f);
     SetTargetFPS(144);
@@ -23,7 +23,7 @@ Program::Program(){
 
     
     m_viewGroups.add(new ViewGroup(
-        new AddRecipeView (outOfViewPos, inViewPos),
+        new AddRecipeView (outOfViewPos, inViewPos, eventBus),
         new ExpandingButton(viewButtonSize, "Add recipe", viewButtonPos),
         ADD_VIEW
     ));

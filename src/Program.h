@@ -6,7 +6,7 @@
 #include "Timer.hpp"
 #include "Views/view.h"
 #include "Ui/UiButton.hpp"
-
+#include "Transmission/EventBus.hpp"
 
 class Program{
 public:
@@ -31,7 +31,7 @@ public:
     };
 
 public:
-    Program();
+    Program(EventBus* eventBus);
     ~Program();
     void run();
     void toggleView(ViewType type);

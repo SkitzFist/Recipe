@@ -33,6 +33,10 @@ void InputField::handleInput(){
         }
     }
 
+    if(!m_isFocused){
+        return;
+    }
+
     handleCarrotOffset();
     handleTextInput();
     handleRemoveBackward();

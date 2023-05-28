@@ -3,14 +3,16 @@
 
 #include <vector>
 
+#include "Transmission/EventBus.hpp"
 #include "Recipe.hpp"
 #include "sqlite3.h"
 
-class DataBase{
+class DataBase: public EventHandler<AddRecipeEvent>{
 
 public:
-    DataBase();
+    DataBase(EventBus* eventBus);
     ~DataBase();
+
     bool insertRecipe(const Recipe& recipe) const;
     bool searchRecipe(const std::string& name);
     bool updateRecipe(const Recipe& recipe);
@@ -22,6 +24,7 @@ public:
 public:
 
 private:
+    EventBus* m_eventBus;
     sqlite3* m_db;
     const std::string FILE_NAME;
     inline static int m_recipeID;
@@ -34,6 +37,10 @@ private:
     bool executeSQL(const std::string& _sql, int(*callback)(void*, int, char**, char**), void* _data) const;
     static int getRowsCallback(void *data, int argc, char** argv, char** azColName);
     static int getRecipesCallback(void *data, int argc, char** argv, char** azColName);
+
+    /////////////////////
+    ///EventHandlers
+    void onEvent(const AddRecipeEvent& event) override;
 };
 
 #endif

@@ -70,7 +70,8 @@
         "xhash": "cpp",
         "typeindex": "cpp",
         "unordered_map": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "functional": "cpp"
     },
     "todohighlight.isEnable": true,
     "todohighlight.keywords": [

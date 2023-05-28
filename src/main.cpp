@@ -2,9 +2,11 @@
 #include "Program.h"
 
 int main(){
-    DataBase db;    
-    Program prog;
+    EventBus* eventBus = new EventBus();
+    DataBase db(eventBus);    
+    Program prog(eventBus);
     prog.run();
 
+    delete eventBus;
     return 0;
 }

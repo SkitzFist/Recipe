@@ -1,7 +1,7 @@
 #include "TabCycling.h"
 
 TabCycling::TabCycling():
-    m_inputFields(3){
+    m_inputFields(4){
 
 }
 

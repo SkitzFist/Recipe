@@ -3,6 +3,7 @@
 
 #include "UiButton.hpp"
 #include "Collision.h"
+#include "Settings.h"
 
 class ExpandingButton : public UiButton{
 public:

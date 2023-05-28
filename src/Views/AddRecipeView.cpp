@@ -4,11 +4,8 @@
 #include "Ui/Button.hpp"
 #include "Recipe.hpp"
 
-//debug
-#include "Log.hpp"
-
-AddRecipeView::AddRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos):
-View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE), m_inputGroups(3){
+AddRecipeView::AddRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos, EventBus* eventBus):
+View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE), m_eventBus(eventBus) ,m_inputGroups(3){
 
     Vector2 inputFieldSize = {
         Settings::BIG_PANEL_SIZE.x * 0.9f,
@@ -41,6 +38,9 @@ View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE), m_inputGroups(3){
     }
 
     m_addButton = new Button(m_currentPos, Vector2{inputFieldSize.x / 2.f,50}, "Add");
+    m_addButton->onClick.connect([this](){
+        this->onAddRecipe();
+    });
 }
 
 AddRecipeView::~AddRecipeView(){
@@ -105,6 +105,7 @@ void AddRecipeView::render() const{
 }
 
 void AddRecipeView::onAddRecipe(){
+    
     if (!allInputFieldHasValidInput())
     {
         // TODO add messageView
@@ -120,6 +121,8 @@ void AddRecipeView::onAddRecipe(){
     {
         group->inputField->clear();
     }
+
+    m_eventBus->fireEvent(AddRecipeEvent(recipe));
 }
 
 bool AddRecipeView::allInputFieldHasValidInput()

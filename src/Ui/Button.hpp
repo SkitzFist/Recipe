@@ -11,7 +11,6 @@ class Button : public UiButton{
 public:
 
     Button(Vector2 pos, Vector2 size, const std::string& text);
-    Button(EventBus* eventBus,Vector2 pos, Vector2 size, const std::string& text, Event* event);
     ~Button();
 
     ///////////////////////////////////////////////////
@@ -35,8 +34,8 @@ private:
 };
 
 ////////////////////////////// IMPL /////////////////////////////////////////////////////
- Button::Button(EventBus* eventBus, Vector2 pos, Vector2 size, const std::string& text, Event* event): 
-    m_eventBus(eventBus), m_pos(pos), m_size(size), m_text(text), m_isHovering(false), EVENT(event){
+ Button::Button(Vector2 pos, Vector2 size, const std::string& text): 
+   m_pos(pos), m_size(size), m_text(text), m_isHovering(false){
 
     m_fontSize = GetFontDefault().baseSize * 4.f;
     Vector2 textSize = MeasureTextEx(GetFontDefault(), m_text.c_str(), m_fontSize, 2.f);
@@ -50,7 +49,6 @@ private:
 }
 
 Button::~Button(){
-    delete EVENT;
 }
 
 void Button::handleInput(){
@@ -63,7 +61,7 @@ void Button::handleInput(){
         m_isHovering = true;
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            
+            onClick.emit();
         }
     }
     else

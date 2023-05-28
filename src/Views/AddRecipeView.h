@@ -7,12 +7,13 @@
 #include "View.h"
 
 #include "Settings.h"
+#include "Transmission/EventBus.hpp"
 #include "Ui/UiButton.hpp"
 #include "TabCycling.h"
 
 class AddRecipeView : public View{
 public:
-    AddRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos);
+    AddRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos, EventBus* eventBus);
     virtual ~AddRecipeView();
 
     virtual void handleInput() override;
@@ -21,6 +22,7 @@ public:
 
     void onAddRecipe();
 private:
+    EventBus* m_eventBus;
     float m_localXAlignment;
     
     Array<InputGroup*> m_inputGroups;

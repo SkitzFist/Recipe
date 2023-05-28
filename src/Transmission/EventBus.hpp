@@ -7,25 +7,8 @@
 
 #include "EventHandler.hpp"
 
-#include "Log.hpp"
-
 class EventBus{
 public:
-    struct ID
-    {
-        int id;
-        ID(int _id)
-        {
-            id = _id;
-        }
-    };
-
-    inline int getNewId()
-    {
-        static int counter = 0;
-        return counter++;
-    }
-
 public:
     EventBus(){
 
@@ -37,21 +20,19 @@ public:
 
     template <class EventType>
     void registerHandler(EventHandler<EventType>* handler){
-        m_handlers[typeid(EventType)].emplace_back((ID*)handler);
+        m_handlers[typeid(EventType)].emplace_back((EventHandlerID*)handler);
     }
 
     template <class EventType>
     void fireEvent(const EventType& event){
-        Log::info(typeid(EventType).name());
         if(!eventTypeExists(typeid(EventType))){
-            Log::info("returning");
             return;
         }
         
-        std::vector<ID*>* vec = &m_handlers[typeid(EventType)];
+        std::vector<EventHandlerID*>* vec = &m_handlers[typeid(EventType)];
 
         for(std::size_t i = 0; i < vec->size(); ++i){
-            ID* handlerID = vec->at(i);
+            EventHandlerID* handlerID = vec->at(i);
             EventHandler<EventType>* handler = (EventHandler<EventType>*)handlerID;
             handler->onEvent(event);
     }
@@ -59,7 +40,7 @@ public:
 
     template <class EventType>
     void removeHandler(EventHandler<EventType>* handler){
-        std::vector<ID*>* vec = &m_handlers[typeid(EventType)];
+        std::vector<EventHandlerID*>* vec = &m_handlers[typeid(EventType)];
         if(!vec){
             return;
         }
@@ -78,7 +59,7 @@ private:
         return m_handlers.find(typeIndex) != m_handlers.end();
     }
 
-    std::unordered_map<std::type_index, std::vector<ID*>> m_handlers;
+    std::unordered_map<std::type_index, std::vector<EventHandlerID*>> m_handlers;
 };
 
 #endif

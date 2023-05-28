@@ -3,8 +3,6 @@
 
 #include <utility>
 #include <type_traits>
-
-//debug
 #include "Log.hpp"
 
 template <class T>

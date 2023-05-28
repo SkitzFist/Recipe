@@ -8,9 +8,11 @@ namespace Settings{
     inline constexpr const int HEIGHT = 1080 - 80;
 
     // View
+        //Big panel
         inline constexpr const Vector2 BIG_PANEL_SIZE{WIDTH * 0.8f, HEIGHT * 0.8f};
         inline constexpr const int VIEW_X_ALIGNMENT = WIDTH * 0.1f;
 
+    //todo enscapsulate in namespace
     ////////////////////////////////////////////////////////////////////////////////////
     //                        COLORS  
         //General
