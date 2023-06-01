@@ -3,8 +3,7 @@
 #include "Settings.h"
 #include "raylib.h"
 
-#include "Views/AddRecipeView.h"
-#include "Views/ModifyRecipeView.h"
+#include "Views/BigView.hpp"
 
 #include "Ui/ExpandingButton.hpp"
 
@@ -25,7 +24,7 @@ Program::Program(EventBus* eventBus):
 
     
     m_viewGroups.add(new ViewGroup(
-        new AddRecipeView (outOfViewPos, inViewPos, eventBus),
+        new BigView<AddRecipeEvent>(outOfViewPos, inViewPos, eventBus, "Add Recipe", "Add"),
         new ExpandingButton(viewButtonSize, "Add recipe", viewButtonPos),
         ADD_VIEW
     ));
@@ -37,7 +36,7 @@ Program::Program(EventBus* eventBus):
     outOfViewPos = {Settings::WIDTH + Settings::BIG_VIEW_SIZE.x, inViewPos.y};
 
     m_viewGroups.add(new ViewGroup(
-        new ModifyRecipeView(outOfViewPos, inViewPos),
+        new BigView<ModifyRecipeEvent>(outOfViewPos, inViewPos, eventBus, "Modify Recipe", "Modify"),
         new ExpandingButton(viewButtonSize,"Modify Recipe", Vector2{viewButtonPos.x, viewButtonPos.y + (viewButtonSize.y * 1.5f)}),
         MODIFY_VIEW
     ));

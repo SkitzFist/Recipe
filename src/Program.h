@@ -4,7 +4,7 @@
 #include <memory>
 #include "Array.hpp"
 #include "Timer.hpp"
-#include "Views/view.h"
+#include "Views/View.h"
 #include "Ui/UiButton.hpp"
 #include "Transmission/EventBus.hpp"
 
