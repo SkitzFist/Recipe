@@ -7,10 +7,21 @@ namespace Settings{
     inline constexpr const int WIDTH = (1920/2);
     inline constexpr const int HEIGHT = 1080 - 80;
 
+    //Text
+    inline int FONT_SIZE;
+
+
     // View
-        //Big panel
-        inline constexpr const Vector2 BIG_PANEL_SIZE{WIDTH * 0.8f, HEIGHT * 0.8f};
+        //General
+        inline constexpr const float VIEW_TRANSITION_DURATION_MS = 800.f;
+        //Big view
+        inline constexpr const Vector2 BIG_VIEW_SIZE = {WIDTH * 0.8f, HEIGHT * 0.8f};
         inline constexpr const int VIEW_X_ALIGNMENT = WIDTH * 0.1f;
+
+        //Message view
+        inline constexpr const Vector2 MESSAGE_VIEW_MAX_SIZE = {WIDTH * 0.4f, HEIGHT * 0.2f};
+        inline constexpr const float MESSAGE_VIEW_MAX_WIDTH = WIDTH * 0.4f;
+
 
     //todo enscapsulate in namespace
     ////////////////////////////////////////////////////////////////////////////////////

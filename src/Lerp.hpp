@@ -73,8 +73,8 @@ namespace Lerp
         const float c3 = c1 + 1;
 
         float x = time - 1;
-        float x2 = x * x; // this is equivalent to pow(x, 2)
-        float x3 = x2 * x; // this is equivalent to pow(x, 3)
+        float x2 = x * x; 
+        float x3 = x2 * x;
         
         return 1 + c3 * x3 + c1 * x2;
     }

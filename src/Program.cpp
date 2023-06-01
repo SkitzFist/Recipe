@@ -8,16 +8,18 @@
 
 #include "Ui/ExpandingButton.hpp"
 
-Program::Program(EventBus* eventBus){
+Program::Program(EventBus* eventBus): 
+    m_messageController(eventBus){
     InitWindow(Settings::WIDTH, Settings::HEIGHT, "Recipe");
     SetWindowPosition(GetScreenWidth(), 25.f);
     SetTargetFPS(144);
     SetExitKey(KEY_ESCAPE);
+    Settings::FONT_SIZE = GetFontDefault().baseSize * 4;
     
     Vector2 inViewPos = {
-        Settings::VIEW_X_ALIGNMENT,(Settings::HEIGHT / 2.f) - (Settings::BIG_PANEL_SIZE.y / 2.f)
+        Settings::VIEW_X_ALIGNMENT,(Settings::HEIGHT / 2.f) - (Settings::BIG_VIEW_SIZE.y / 2.f)
     };
-    Vector2 outOfViewPos = {0 - Settings::BIG_PANEL_SIZE.x - 10.f, inViewPos.y};
+    Vector2 outOfViewPos = {0 - Settings::BIG_VIEW_SIZE.x - 10.f, inViewPos.y};
     Vector2 viewButtonSize = {50, 50};
     Vector2 viewButtonPos = {20.f, Settings::HEIGHT / 2.f};
 
@@ -30,9 +32,9 @@ Program::Program(EventBus* eventBus){
 
     inViewPos = {
         Settings::VIEW_X_ALIGNMENT, 
-        (Settings::HEIGHT / 2.f) - (Settings::BIG_PANEL_SIZE.y / 2.f)
+        (Settings::HEIGHT / 2.f) - (Settings::BIG_VIEW_SIZE.y / 2.f)
     };
-    outOfViewPos = {Settings::WIDTH + Settings::BIG_PANEL_SIZE.x, inViewPos.y};
+    outOfViewPos = {Settings::WIDTH + Settings::BIG_VIEW_SIZE.x, inViewPos.y};
 
     m_viewGroups.add(new ViewGroup(
         new ModifyRecipeView(outOfViewPos, inViewPos),
@@ -47,7 +49,6 @@ Program::Program(EventBus* eventBus){
             ptr->toggleView(group->type);
         });
     }
-
 }
 
 Program::~Program(){
@@ -60,7 +61,7 @@ void Program::run(){
         float dt = m_frameTimer.getElapsed() / 1000;
         m_frameTimer.reset();
         handleInput();
-        update(dt);    
+        update(dt);
         render();
     }
     CloseWindow();
@@ -71,10 +72,13 @@ void Program::handleInput(){
         if(group->view->isVisible() || group->view->isInTransition()){
             group->view->handleInput();
         }
+        
         if(!group->view->isInTransition()){
             group->button->handleInput();
         }
-    }      
+    }
+
+    m_messageController.handleInput();
 }
 
 void Program::update(float dt){
@@ -83,6 +87,8 @@ void Program::update(float dt){
             group->view->update(dt);
         }
     }   
+
+    m_messageController.update(dt);
 }
 
 void Program::render() const{
@@ -94,7 +100,9 @@ void Program::render() const{
             }
             
             group->button->render();
-        }     
+        }
+
+        m_messageController.render();
     EndDrawing();
 }
 

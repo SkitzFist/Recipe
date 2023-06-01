@@ -6,12 +6,7 @@
 #include "Transmission/Signal.hpp"
 
 #include "raylib.h"
-
-
-typedef struct Vector2i{ //todo, move this
-    int x;
-    int y;
-}Vector2i;
+#include "Vector2i.hpp"
 
 struct TextMarkerBox{
     Vector2 pos;

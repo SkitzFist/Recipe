@@ -5,14 +5,14 @@
 #include "Recipe.hpp"
 
 AddRecipeView::AddRecipeView(const Vector2& outOfViewPos, const Vector2& inViewPos, EventBus* eventBus):
-View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE), m_eventBus(eventBus) ,m_inputGroups(3){
+View(outOfViewPos, inViewPos, Settings::BIG_VIEW_SIZE), m_eventBus(eventBus) ,m_inputGroups(3){
 
     Vector2 inputFieldSize = {
-        Settings::BIG_PANEL_SIZE.x * 0.9f,
-        Settings::BIG_PANEL_SIZE.y * 0.05
+        Settings::BIG_VIEW_SIZE.x * 0.9f,
+        Settings::BIG_VIEW_SIZE.y * 0.05
     };
 
-    m_localXAlignment = (Settings::BIG_PANEL_SIZE.x / 2.f) - (inputFieldSize.x / 2.f);
+    m_localXAlignment = (Settings::BIG_VIEW_SIZE.x / 2.f) - (inputFieldSize.x / 2.f);
 
     m_inputGroups.add(new InputGroup(
         new InputField(inputFieldSize),
@@ -73,8 +73,8 @@ void AddRecipeView::update(const float dt){
 
 void AddRecipeView::render() const{
     BeginBlendMode(BLEND_ADDITIVE);
-        DrawRectangle(m_currentPos.x, m_currentPos.y, Settings::BIG_PANEL_SIZE.x, 
-        Settings::BIG_PANEL_SIZE.y, Settings::VIEW_BACKGROUND_COLOR);  
+        DrawRectangle(m_currentPos.x, m_currentPos.y, Settings::BIG_VIEW_SIZE.x, 
+        Settings::BIG_VIEW_SIZE.y, Settings::VIEW_BACKGROUND_COLOR);  
     EndBlendMode();
 
     int titleFontSize = GetFontDefault().baseSize * 5;
