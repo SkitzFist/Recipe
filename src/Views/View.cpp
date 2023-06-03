@@ -2,9 +2,6 @@
 #include "Lerp.hpp"
 #include "Settings.h"
 
-//Debug
-#include "Log.hpp"
-
 View::View() :
     View(Vector2{0.f,0.f}, Vector2{0.0f,0.f}, Vector2{0.f,0.f}){
 }

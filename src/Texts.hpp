@@ -5,7 +5,7 @@
 
 namespace Texts{
     inline const std::string ERROR = "Error!";
-    inline const std::string NOT_VALID_INPUT = "Empty of invalid input";
+    inline const std::string NOT_VALID_INPUT = "Not valid or empty input";
 }
 
 #endif

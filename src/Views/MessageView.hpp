@@ -37,6 +37,7 @@ private:
     const Vector2 getSizeOfChildElements() const;
 
     const float getNextHalfPointY(Vector2 a, Vector2 size) const;
+    void updatePositions();
 };
 
 #endif

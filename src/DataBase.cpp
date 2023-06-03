@@ -5,6 +5,7 @@
 #include <string>
 #include <cctype>
 
+//debug
 #include "Log.hpp"
 
 int DataBase::getRecipesCallback(void *data, int argc, char** argv, char** azColName){
@@ -28,7 +29,7 @@ int DataBase::getRowsCallback(void *data, int argc, char** argv, char** azColNam
     return 0;
 }
 
-DataBase::DataBase(EventBus* eventBus) : EventHandler<AddRecipeEvent>(), m_eventBus(eventBus) ,FILE_NAME("recipe.db"){
+DataBase::DataBase(EventBus* eventBus) : EventHandler<AddRecipeEvent>(), EventHandler<ModifyRecipeEvent>(), m_eventBus(eventBus) ,FILE_NAME("recipe.db"){
     
     std::filesystem::path path{FILE_NAME};
     if(!std::filesystem::exists(path)){
@@ -41,7 +42,8 @@ DataBase::DataBase(EventBus* eventBus) : EventHandler<AddRecipeEvent>(), m_event
         setRecipeID();
     }
 
-    eventBus->registerHandler<AddRecipeEvent>(this); 
+    eventBus->registerHandler<AddRecipeEvent>(this);
+    eventBus->registerHandler<ModifyRecipeEvent>(this);
 }
 
 DataBase::~DataBase(){
@@ -70,7 +72,7 @@ bool DataBase::searchRecipe(const std::string& name){
     return m_selectedRecipes.size() > 0;
 }
 
-bool DataBase::updateRecipe(const Recipe& recipe){
+bool DataBase::modifyRecipe(const Recipe& recipe){
     std::string query = "UPDATE recipes " \
                          "SET name = '" + recipe.name + "', " \
                          "reference = '" + recipe.reference + "', " \
@@ -165,4 +167,11 @@ void DataBase::onEvent(const AddRecipeEvent& event){
     insertRecipe(event.recipe);
 
     ///m_eventBus->fireEvent(AddRecipeCallback(insertRecipe(event.recipe)));
+}
+
+
+void DataBase::onEvent(const ModifyRecipeEvent& event){
+    //todo searchBar should receive event first, so it can add recipe.ID 
+    modifyRecipe(event.recipe);
+    //todo event callback;
 }

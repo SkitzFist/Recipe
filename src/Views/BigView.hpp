@@ -12,9 +12,6 @@
 #include "TabCycling.h"
 #include "Texts.hpp"
 
-//Debug
-#include "Log.hpp"
-
 template <class EventType>
 class BigView : public View{
 public:
@@ -121,7 +118,7 @@ void BigView<EventType>::render() const
 {
     BeginBlendMode(BLEND_ADDITIVE);
     DrawRectangle(m_currentPos.x, m_currentPos.y, Settings::BIG_VIEW_SIZE.x,
-                  Settings::BIG_VIEW_SIZE.y, Settings::VIEW_BACKGROUND_COLOR);
+                  Settings::BIG_VIEW_SIZE.y, Settings::VIEW_BGR_COLOR);
     EndBlendMode();
 
     int titleFontSize = GetFontDefault().baseSize * 5;
@@ -153,24 +150,27 @@ void BigView<EventType>::render() const
 template <class EventType>
 void BigView<EventType>::sendEvent()
 {
-
+    Log::info("BigView, sendEvent");
     if (!allInputFieldHasValidInput())
-    {
-        Log::info("Fire event");
+    {  
+        //todo handle error event inside method call instead
         m_eventBus->fireEvent(AddMessageEvent(Texts::ERROR, Texts::NOT_VALID_INPUT));
         return;
     }
 
+    Log::info("\tcreate recipe");
     Recipe recipe;
     recipe.name = m_inputGroups[0]->inputField->getText();
     recipe.reference = m_inputGroups[1]->inputField->getText();
     recipe.tags = m_inputGroups[2]->inputField->getText();
 
+    Log::info("\tclearing input fields");
     for (InputGroup *group : m_inputGroups)
     {
         group->inputField->clear();
     }
 
+    Log::info("Sending event");
     m_eventBus->fireEvent<EventType>(recipe);
 }
 

@@ -7,7 +7,7 @@
 #include "Recipe.hpp"
 #include "sqlite3.h"
 
-class DataBase: public EventHandler<AddRecipeEvent>{
+class DataBase: public EventHandler<AddRecipeEvent>, public EventHandler<ModifyRecipeEvent>{
 
 public:
     DataBase(EventBus* eventBus);
@@ -15,7 +15,7 @@ public:
 
     bool insertRecipe(const Recipe& recipe) const;
     bool searchRecipe(const std::string& name);
-    bool updateRecipe(const Recipe& recipe);
+    bool modifyRecipe(const Recipe& recipe);
 
     void selectAllRecipe();
     void selectRecipeWithTags(const std::vector<std::string>& _vec);
@@ -38,9 +38,11 @@ private:
     static int getRowsCallback(void *data, int argc, char** argv, char** azColName);
     static int getRecipesCallback(void *data, int argc, char** argv, char** azColName);
 
-    /////////////////////
-    ///EventHandlers
+    
+    //______________EventHandlers_______________________//
     void onEvent(const AddRecipeEvent& event) override;
+    void onEvent(const ModifyRecipeEvent& event) override;
+    //________________________________________________//
 };
 
 #endif

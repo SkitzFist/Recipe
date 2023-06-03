@@ -13,8 +13,10 @@ Program::Program(EventBus* eventBus):
     SetWindowPosition(GetScreenWidth(), 25.f);
     SetTargetFPS(144);
     SetExitKey(KEY_ESCAPE);
+
     Settings::FONT_SIZE = GetFontDefault().baseSize * 4;
     
+    //Add recipe view
     Vector2 inViewPos = {
         Settings::VIEW_X_ALIGNMENT,(Settings::HEIGHT / 2.f) - (Settings::BIG_VIEW_SIZE.y / 2.f)
     };
@@ -28,7 +30,8 @@ Program::Program(EventBus* eventBus):
         new ExpandingButton(viewButtonSize, "Add recipe", viewButtonPos),
         ADD_VIEW
     ));
-
+    
+    //Modify recipe view
     inViewPos = {
         Settings::VIEW_X_ALIGNMENT, 
         (Settings::HEIGHT / 2.f) - (Settings::BIG_VIEW_SIZE.y / 2.f)
@@ -41,9 +44,9 @@ Program::Program(EventBus* eventBus):
         MODIFY_VIEW
     ));
 
+    //hookup button signal
     Program* ptr = this;
     for(ViewGroup* group : m_viewGroups){
-    
         group->button->onClick.connect([ptr, group](){
             ptr->toggleView(group->type);
         });
