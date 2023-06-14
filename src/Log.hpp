@@ -2,8 +2,8 @@
 #define _Log
 
 #include <string>
-
 #include "raylib.h"
+#include "Vector2i.hpp"
 
 namespace Log
 {
@@ -17,6 +17,11 @@ namespace Log
     }
 
     static inline void info(const std::string& _str , Vector2 vec){
+        std::string str = _str + ": " + std::to_string(vec.x) + " , " + std::to_string(vec.y);
+        TraceLog(LOG_INFO, str.c_str());
+    }
+
+    static inline void info(const std::string& _str , Vector2i vec){
         std::string str = _str + ": " + std::to_string(vec.x) + " , " + std::to_string(vec.y);
         TraceLog(LOG_INFO, str.c_str());
     }

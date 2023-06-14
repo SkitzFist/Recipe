@@ -3,7 +3,7 @@
 
 int main(){
     EventBus* eventBus = new EventBus();
-    DataBase db(eventBus);    
+    DataBase db(eventBus);
     Program prog(eventBus);
     prog.run();
 

@@ -44,7 +44,7 @@ public:
     void add(const T& item);
     void add(T&& item);
 
-    void remove(const int& _index);
+    void remove(unsigned int _index);
 
     const T& operator[](unsigned int _index) const;
     T& operator[](unsigned int _index);
@@ -54,6 +54,7 @@ public:
     Iterator end()const{return m_data+m_size;}
     Iterator begin(){return m_data;}
     Iterator end(){return m_data+m_size;}
+    const bool isEmpty() const;
 private:
     unsigned int m_size;
     unsigned int m_capacity;
@@ -106,18 +107,12 @@ void Array<T>::add(T&& item){
     }
 
 template <class T>
-void Array<T>::remove(const int& _index){
+void Array<T>::remove(unsigned int _index){
     if(!(_index >= 0 && _index < m_size)){
         return;
     }
     m_data[_index].~T();
     m_data[_index] = m_data[--m_size];
-
-    if constexpr (std::is_pointer_v<T>){
-        m_data[m_size] = nullptr;
-    }else{
-        m_data[m_size] = NULL;
-    }
 }
 
 template <class T>
@@ -144,7 +139,7 @@ void Array<T>::clear(){
     m_size = 0;
 }
 
-//Todo::Check if T is pointer, in that case, delete memory or make another method for it.
+//Todo::Check if T is pointer, in that case, delete memory or make another method for it. update: array should not delete memory, it's not responsible for memory deletion.
 
 template <class T>
 void Array<T>::reallocate(unsigned int _newCapacity){
@@ -164,6 +159,11 @@ void Array<T>::reallocate(unsigned int _newCapacity){
 
     m_data = tmp;
     m_capacity  = _newCapacity;
+}
+
+template <class T>
+const bool Array<T>::isEmpty() const{
+    return m_size == 0;
 }
 
 #endif

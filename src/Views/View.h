@@ -12,6 +12,7 @@ public:
     };
 
 public:
+    View();
     View(const Vector2& outOfViewPos, const Vector2& inViewPos, const Vector2& size);
     virtual ~View();
 
@@ -26,9 +27,14 @@ public:
     void setVisible(bool visible);
 
     const bool isInTransition() const;
+
 protected:
     Vector2 m_size;
     Vector2 m_currentPos;
+
+    void setOutOfViewPos(Vector2 pos);
+    void setInViewPos(Vector2 pos);
+    void setSize(Vector2 size);
 
 protected:    
     struct InputGroup{

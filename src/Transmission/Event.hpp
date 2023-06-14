@@ -7,6 +7,9 @@ class Event
 {
 };
 
+
+
+//////////////Recipe events/////////////////////////////////////
 //Add
 class AddRecipeEvent : Event{
 public:
@@ -35,6 +38,18 @@ class SearchFoundEvent : Event
 public:
     Recipe recipe;
     SearchFoundEvent(Recipe _recipe) : recipe(_recipe) {}
+};
+
+
+///////////Other events/////////////////////////////////////
+class AddMessageEvent : public Event{
+public:
+    std::string title;
+    std::string text;
+    std::string buttonText;
+
+    AddMessageEvent(const std::string& _title, const std::string& _text, const std::string& _buttonText):
+        title(_title), text(_text), buttonText(_buttonText){}
 };
 
 #endif

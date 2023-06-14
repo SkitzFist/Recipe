@@ -5,6 +5,8 @@
 #include "Collision.h"
 #include "Settings.h"
 
+//Todo: move impl to .cpp 
+
 class ExpandingButton : public UiButton{
 public:
     ExpandingButton(Vector2 size, const std::string& text, Vector2 pos = Vector2{0.f,0.f}):

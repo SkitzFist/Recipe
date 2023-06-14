@@ -8,6 +8,8 @@
 #include "Ui/UiButton.hpp"
 #include "Transmission/EventBus.hpp"
 
+#include "Views/MessageController.hpp"
+
 class Program{
 public:
     enum ViewType{
@@ -45,6 +47,8 @@ private:
 
     Array<ViewGroup*> m_viewGroups;
     ViewGroup* getViewGroup(ViewType type) const; 
+    MessageController m_messageController;
+
 };
 
 #endif

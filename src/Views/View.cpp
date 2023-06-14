@@ -1,12 +1,17 @@
 #include "View.h"
 #include "Lerp.hpp"
+#include "Settings.h"
 
 //Debug
 #include "Log.hpp"
 
+View::View() :
+    View(Vector2{0.f,0.f}, Vector2{0.0f,0.f}, Vector2{0.f,0.f}){
+}
+
 View::View(const Vector2& outOfViewPos, const Vector2& inViewPos, const Vector2& size):
     m_size(size), m_currentPos(outOfViewPos), m_outOfViewPos(outOfViewPos), m_inViewPos(inViewPos),
-    m_isVisible(false), m_transitionTimer(800), m_isInTransition(false), m_transitionShow(true){
+    m_isVisible(false), m_transitionTimer(Settings::VIEW_TRANSITION_DURATION_MS), m_isInTransition(false), m_transitionShow(true){
 }
 
 View::~View(){
@@ -70,4 +75,17 @@ void View::setVisible(bool visible){
 
 const bool View::isInTransition() const{
     return m_isInTransition;
+}
+
+
+void View::setOutOfViewPos(Vector2 pos){
+    m_outOfViewPos = pos;
+}
+
+void View::setInViewPos(Vector2 pos){
+    m_inViewPos = pos;
+}
+
+void View::setSize(Vector2 size){
+    m_size = size;
 }
