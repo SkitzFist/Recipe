@@ -48,7 +48,7 @@ public:
     std::string text;
     std::string buttonText;
 
-    AddMessageEvent(const std::string& _title, const std::string& _text, const std::string& _buttonText):
+    AddMessageEvent(const std::string& _title, const std::string& _text, const std::string& _buttonText = "Close"):
         title(_title), text(_text), buttonText(_buttonText){}
 };
 

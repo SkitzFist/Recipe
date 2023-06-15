@@ -4,6 +4,7 @@
 MessageController::MessageController(EventBus* eventBus):
     m_eventBus(eventBus), m_messages(3), m_messageIdCount(0){
 
+    m_eventBus->registerHandler<AddMessageEvent>(this);
 }
 
 MessageController::~MessageController(){
@@ -68,5 +69,6 @@ void MessageController::handleRemoveMessage(int id){
 //////////////
 // Events ///
 void MessageController::onEvent(const AddMessageEvent& event){
+    Log::info("onEvent");
     handleAddMessage(event.title, event.text, event.buttonText);
 }

@@ -6,6 +6,9 @@
 #include "Text/FitTextByWidth.hpp"
 #include "Ui/Button.hpp"
 
+//debug
+#include "Lerp.hpp"
+
 MessageView::MessageView(int id, const std::string& title, const std::string& text, const std::string& buttonText):
     m_id(id), m_title(title), m_text(text), m_buttonText(buttonText){
 
@@ -53,7 +56,8 @@ void MessageView::handleInput(){
     m_button->handleInput();
 }
 
-const float MessageView::getNextHalfPoint(Vector2 a, Vector2 size) const{
+/*
+const float MessageView::getNextHalfPointY(Vector2 a, Vector2 size) const{
     Vector2 posA = {a.x + size.x, a.y + size.y};
     Vector2 posB = {posA.x, m_currentPos.y + m_size.y};
     Vector2 delta = {posB.x - posA.x, posB.y - posA.y};
@@ -61,6 +65,13 @@ const float MessageView::getNextHalfPoint(Vector2 a, Vector2 size) const{
     float length = sqrt((delta.x * delta.x) + (delta.y * delta.y));
     Vector2 halfPoint = Vector2{posA.x, (posA.y + (length/2.f))};
     return halfPoint.y;
+}
+*/
+
+const float MessageView::getNextHalfPointY(Vector2 a, Vector2 size) const{
+    Vector2 posA = {a.x + size.x, a.y + size.y};
+    Vector2 posB = {posA.x, m_currentPos.y + m_size.y};
+    return Lerp::lerp(0.5f, posA.y, posB.y);
 }
 
 void MessageView::update(float dt){
@@ -74,13 +85,13 @@ void MessageView::update(float dt){
     };
 
     Vector2 textSize = MeasureTextEx(GetFontDefault(), m_text.c_str(), m_fontSize, 2.f);
-    float halfPointY = getNextHalfPoint(m_titlePos, titleSize);
+    float halfPointY = getNextHalfPointY(m_titlePos, titleSize) - m_button->getSize().y;
     m_textPos = {
         halfPointX - (textSize.x / 2.f),
-        halfPointY - (textSize.y * 0.75f)
+        halfPointY
     };
 
-    halfPointY = getNextHalfPoint(m_textPos, textSize);
+    halfPointY = getNextHalfPointY(m_textPos, textSize);
     Vector2 buttonPos = {
         halfPointX - (m_button->getSize().x/2.f),
         halfPointY - (m_button->getSize().y / 2.f)
@@ -90,7 +101,7 @@ void MessageView::update(float dt){
 
 void MessageView::render() const{
     //draw panel
-    BeginBlendMode(BLEND_SUBTRACT_COLORS);
+    BeginBlendMode(BLEND_MULTIPLIED | BLEND_ALPHA_PREMULTIPLY);
         Rectangle rec = {
             m_currentPos.x,
             m_currentPos.y,

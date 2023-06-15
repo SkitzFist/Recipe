@@ -10,6 +10,7 @@
 #include "Transmission/EventBus.hpp"
 #include "Ui/Button.hpp"
 #include "TabCycling.h"
+#include "Texts.hpp"
 
 //Debug
 #include "Log.hpp"
@@ -42,15 +43,15 @@ private:
 template <class EventType>
 BigView<EventType>::BigView(const Vector2 &outOfViewPos, const Vector2 &inViewPos, EventBus *eventBus,
     const std::string& title, const std::string& buttonText) : 
-    View(outOfViewPos, inViewPos, Settings::BIG_PANEL_SIZE), m_eventBus(eventBus), m_inputGroups(3),
+    View(outOfViewPos, inViewPos, Settings::BIG_VIEW_SIZE), m_eventBus(eventBus), m_inputGroups(3),
     m_title(title)
 {
     Vector2 inputFieldSize = {
-        Settings::BIG_PANEL_SIZE.x * 0.9f,
-        Settings::BIG_PANEL_SIZE.y * 0.05
+        Settings::BIG_VIEW_SIZE.x * 0.9f,
+        Settings::BIG_VIEW_SIZE.y * 0.05
     };
 
-    m_localXAlignment = (Settings::BIG_PANEL_SIZE.x / 2.f) - (inputFieldSize.x / 2.f);
+    m_localXAlignment = (Settings::BIG_VIEW_SIZE.x / 2.f) - (inputFieldSize.x / 2.f);
 
     m_inputGroups.add(new InputGroup(
         new InputField(inputFieldSize),
@@ -119,8 +120,8 @@ template <class EventType>
 void BigView<EventType>::render() const
 {
     BeginBlendMode(BLEND_ADDITIVE);
-    DrawRectangle(m_currentPos.x, m_currentPos.y, Settings::BIG_PANEL_SIZE.x,
-                  Settings::BIG_PANEL_SIZE.y, Settings::VIEW_BACKGROUND_COLOR);
+    DrawRectangle(m_currentPos.x, m_currentPos.y, Settings::BIG_VIEW_SIZE.x,
+                  Settings::BIG_VIEW_SIZE.y, Settings::VIEW_BACKGROUND_COLOR);
     EndBlendMode();
 
     int titleFontSize = GetFontDefault().baseSize * 5;
@@ -155,7 +156,8 @@ void BigView<EventType>::sendEvent()
 
     if (!allInputFieldHasValidInput())
     {
-        // TODO add messageView
+        Log::info("Fire event");
+        m_eventBus->fireEvent(AddMessageEvent(Texts::ERROR, Texts::NOT_VALID_INPUT));
         return;
     }
 

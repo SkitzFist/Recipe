@@ -22,7 +22,6 @@ namespace Settings{
         inline constexpr const Vector2 MESSAGE_VIEW_MAX_SIZE = {WIDTH * 0.4f, HEIGHT * 0.2f};
         inline constexpr const float MESSAGE_VIEW_MAX_WIDTH = WIDTH * 0.4f;
 
-
     //todo enscapsulate in namespace
     ////////////////////////////////////////////////////////////////////////////////////
     //                        COLORS  
@@ -45,7 +44,6 @@ namespace Settings{
     #define INPUT_BACKGROUND_FOCUSED_COLOR CLITERAL(Color){255, 255, 255, 255}
     #define INPUT_TITLE_COLOR CLITERAL(Color){100, 100, 100, 255}
     #define INPUT_TEXT_COLOR CLITERAL(Color){50, 50, 50, 255}
-
     
 }
 
