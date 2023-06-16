@@ -23,7 +23,6 @@ public:
     const int getId() const;
 
     Signal<int> onClick;
-
 private:
     int m_id;
     std::string m_title;
@@ -37,7 +36,8 @@ private:
     std::string m_buttonText;
     const Vector2 getSizeOfChildElements() const;
 
-    const float getNextHalfPoint(Vector2 a, Vector2 size) const;
+    const float getNextHalfPointY(Vector2 a, Vector2 size) const;
+    void updatePositions();
 };
 
 #endif

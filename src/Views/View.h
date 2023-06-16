@@ -13,6 +13,7 @@ public:
 
 public:
     View();
+
     View(const Vector2& outOfViewPos, const Vector2& inViewPos, const Vector2& size);
     virtual ~View();
 
@@ -31,6 +32,7 @@ public:
 protected:
     Vector2 m_size;
     Vector2 m_currentPos;
+    float m_localXAlignment;
 
     void setOutOfViewPos(Vector2 pos);
     void setInViewPos(Vector2 pos);
@@ -42,14 +44,14 @@ protected:
         std::string title;
 
         InputGroup(InputField* _inputField, const std::string& _title):
-            inputField(_inputField), title(_title)
-        {}
+            inputField(_inputField), title(_title){}
 
         ~InputGroup(){
             delete inputField;
         }
 
     };
+
 private:
     Vector2 m_outOfViewPos;
     Vector2 m_inViewPos;

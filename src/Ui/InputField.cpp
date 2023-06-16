@@ -5,9 +5,6 @@
 #include "Settings.h"
 #include "Collision.h"
 
-//debug
-#include "Log.hpp"
-
 InputField::InputField(Vector2 size):
     m_pos{0.f,0.f}, m_size(size), m_isFocused(false), m_text(""), BLINK_TIME(1.0f), m_blinkTimer(0.0f), 
     m_carrotVisible(false), m_carrotPos(0), REMOVAL_COOLDOWN_START(0.2f), m_removalTimer(0.f), 

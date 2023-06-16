@@ -14,6 +14,8 @@ namespace Settings{
     // View
         //General
         inline constexpr const float VIEW_TRANSITION_DURATION_MS = 800.f;
+        inline constexpr const Color VIEW_BGR_COLOR = {200, 200, 200, 185};
+
         //Big view
         inline constexpr const Vector2 BIG_VIEW_SIZE = {WIDTH * 0.8f, HEIGHT * 0.8f};
         inline constexpr const int VIEW_X_ALIGNMENT = WIDTH * 0.1f;
@@ -21,7 +23,7 @@ namespace Settings{
         //Message view
         inline constexpr const Vector2 MESSAGE_VIEW_MAX_SIZE = {WIDTH * 0.4f, HEIGHT * 0.2f};
         inline constexpr const float MESSAGE_VIEW_MAX_WIDTH = WIDTH * 0.4f;
-
+        inline constexpr const Color MESSAGE_VIEW_BGR_COLOR = {VIEW_BGR_COLOR.r, VIEW_BGR_COLOR.g, VIEW_BGR_COLOR.b, 255};
 
     //todo enscapsulate in namespace
     ////////////////////////////////////////////////////////////////////////////////////
@@ -31,7 +33,7 @@ namespace Settings{
         inline constexpr const Color Title = {144, 238, 144, 255};
 
         //view
-        inline constexpr const Color VIEW_BACKGROUND_COLOR = {200, 200, 200, 185};
+        
         
         //Button
         inline constexpr const Color BUTTON_COLOR = {30, 144, 255, 255};
@@ -45,7 +47,6 @@ namespace Settings{
     #define INPUT_BACKGROUND_FOCUSED_COLOR CLITERAL(Color){255, 255, 255, 255}
     #define INPUT_TITLE_COLOR CLITERAL(Color){100, 100, 100, 255}
     #define INPUT_TEXT_COLOR CLITERAL(Color){50, 50, 50, 255}
-
     
 }
 

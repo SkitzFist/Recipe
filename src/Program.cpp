@@ -3,8 +3,7 @@
 #include "Settings.h"
 #include "raylib.h"
 
-#include "Views/AddRecipeView.h"
-#include "Views/ModifyRecipeView.h"
+#include "Views/BigView.hpp"
 
 #include "Ui/ExpandingButton.hpp"
 
@@ -14,8 +13,10 @@ Program::Program(EventBus* eventBus):
     SetWindowPosition(GetScreenWidth(), 25.f);
     SetTargetFPS(144);
     SetExitKey(KEY_ESCAPE);
+
     Settings::FONT_SIZE = GetFontDefault().baseSize * 4;
     
+    //Add recipe view
     Vector2 inViewPos = {
         Settings::VIEW_X_ALIGNMENT,(Settings::HEIGHT / 2.f) - (Settings::BIG_VIEW_SIZE.y / 2.f)
     };
@@ -25,11 +26,12 @@ Program::Program(EventBus* eventBus):
 
     
     m_viewGroups.add(new ViewGroup(
-        new AddRecipeView (outOfViewPos, inViewPos, eventBus),
+        new BigView<AddRecipeEvent>(outOfViewPos, inViewPos, eventBus, "Add Recipe", "Add"),
         new ExpandingButton(viewButtonSize, "Add recipe", viewButtonPos),
         ADD_VIEW
     ));
-
+    
+    //Modify recipe view
     inViewPos = {
         Settings::VIEW_X_ALIGNMENT, 
         (Settings::HEIGHT / 2.f) - (Settings::BIG_VIEW_SIZE.y / 2.f)
@@ -37,14 +39,14 @@ Program::Program(EventBus* eventBus):
     outOfViewPos = {Settings::WIDTH + Settings::BIG_VIEW_SIZE.x, inViewPos.y};
 
     m_viewGroups.add(new ViewGroup(
-        new ModifyRecipeView(outOfViewPos, inViewPos),
+        new BigView<ModifyRecipeEvent>(outOfViewPos, inViewPos, eventBus, "Modify Recipe", "Modify"),
         new ExpandingButton(viewButtonSize,"Modify Recipe", Vector2{viewButtonPos.x, viewButtonPos.y + (viewButtonSize.y * 1.5f)}),
         MODIFY_VIEW
     ));
 
+    //hookup button signal
     Program* ptr = this;
     for(ViewGroup* group : m_viewGroups){
-    
         group->button->onClick.connect([ptr, group](){
             ptr->toggleView(group->type);
         });
@@ -121,6 +123,8 @@ void Program::toggleView(ViewType type){
         if(group->type == type)
             group->view->show();
         else
-            group->view->hide();   
+            if(group->view->isVisible()){
+                group->view->hide();
+            }
     }
 }
