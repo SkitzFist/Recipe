@@ -2,7 +2,10 @@
 
 TabCycling::TabCycling():
     m_inputFields(4){
+}
 
+TabCycling::TabCycling(TabCycling&& src) noexcept:
+    m_inputFields(std::move(src.m_inputFields)){
 }
 
 void TabCycling::handleInput(){

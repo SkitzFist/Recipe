@@ -11,7 +11,11 @@ class Button : public UiButton{
 public:
 
     Button(Vector2 pos, Vector2 size, const std::string& text);
+    Button(Button&& src) noexcept;
+    
     virtual ~Button() override;
+
+    Button& operator=(const Button&& other) noexcept;
 
     ///////////////////////////////////////////////////
     ////////   Inherited from UiButton

@@ -24,6 +24,17 @@ public:
     ModifyRecipeEvent(const Recipe &_recipe) : recipe(_recipe) {}
 };
 
+class ModifyRecipePrepareId : Event{
+public:
+    int id;
+    ModifyRecipePrepareId(int _id) : id(_id){}
+};
+
+class ModifyRecipePreparParameters : Event{
+public:
+    Recipe recipe;
+    ModifyRecipePreparParameters(const Recipe& _recipe) : recipe(_recipe) {}
+};
 
 //Search
 class SearchRecipeEvent : Event

@@ -29,22 +29,29 @@ public:
 
     const bool isInTransition() const;
 
+    float m_localXAlignment;
 protected:
     Vector2 m_size;
     Vector2 m_currentPos;
-    float m_localXAlignment;
-
+    
+    Vector2 m_outOfViewPos;
+    Vector2 m_inViewPos;
     void setOutOfViewPos(Vector2 pos);
     void setInViewPos(Vector2 pos);
     void setSize(Vector2 size);
 
-protected:    
-    struct InputGroup{
+public:    
+    class InputGroup{
+    public:
         InputField* inputField;
         std::string title;
 
         InputGroup(InputField* _inputField, const std::string& _title):
             inputField(_inputField), title(_title){}
+
+        InputGroup(InputGroup&& src) noexcept :
+            inputField(std::move(src.inputField)), title(std::move(src.title)){
+        }
 
         ~InputGroup(){
             delete inputField;
@@ -53,8 +60,7 @@ protected:
     };
 
 private:
-    Vector2 m_outOfViewPos;
-    Vector2 m_inViewPos;
+
 
     bool m_isVisible;
 

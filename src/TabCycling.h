@@ -7,8 +7,11 @@
 class TabCycling{
 public:
     TabCycling();
+    TabCycling(TabCycling&& src) noexcept;
     void handleInput();
     void addInputField(InputField* InputField);
+
+
 private:
     Array<InputField*> m_inputFields;
 

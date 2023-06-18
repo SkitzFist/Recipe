@@ -35,6 +35,8 @@ private:
 
 public:
     Array(unsigned int _capacity = 10);
+    Array(Array&& src) noexcept;
+
     ~Array();
     const int size() const;
     const int capacity() const{
@@ -67,6 +69,12 @@ Array<T>::Array(unsigned int _capacity)
     if(m_capacity > 0){
         m_data = (T*)::operator new(m_capacity * sizeof(T));
     }
+}
+
+template <class T>
+Array<T>::Array(Array&& src) noexcept:
+    m_size(std::move(src.m_size)), m_capacity(std::move(src.m_capacity)),
+    m_data(std::move(src.m_data)){
 }
 
 template <class T>

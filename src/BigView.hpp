@@ -17,6 +17,8 @@ class BigView : public View{
 public:
     BigView(const Vector2 &outOfViewPos, const Vector2 &inViewPos, EventBus *eventBus, 
         const std::string &title, const std::string &buttonText);
+
+    BigView(BigView&& src) noexcept;
     virtual ~BigView();
 
     virtual void handleInput() override;
@@ -24,6 +26,7 @@ public:
     virtual void render() const override;
 
     void sendEvent();
+    
 private:
     EventBus* m_eventBus;
     
@@ -41,8 +44,8 @@ template <class EventType>
 BigView<EventType>::BigView(const Vector2 &outOfViewPos, const Vector2 &inViewPos, EventBus *eventBus,
     const std::string& title, const std::string& buttonText) : 
     View(outOfViewPos, inViewPos, Settings::BIG_VIEW_SIZE), m_eventBus(eventBus), m_inputGroups(3),
-    m_title(title)
-{
+    m_title(title){
+    Log::info("BigView cstr");
     Vector2 inputFieldSize = {
         Settings::BIG_VIEW_SIZE.x * 0.9f,
         Settings::BIG_VIEW_SIZE.y * 0.05
@@ -51,18 +54,15 @@ BigView<EventType>::BigView(const Vector2 &outOfViewPos, const Vector2 &inViewPo
     m_localXAlignment = (Settings::BIG_VIEW_SIZE.x / 2.f) - (inputFieldSize.x / 2.f);
 
     m_inputGroups.add(new InputGroup(
-        new InputField(inputFieldSize),
-        "Name"
+        new InputField(inputFieldSize), "Name"
     ));
 
     m_inputGroups.add(new InputGroup(
-        new InputField(inputFieldSize),
-        "Reference"
+        new InputField(inputFieldSize), "Reference"
     ));
 
     m_inputGroups.add(new InputGroup(
-        new InputField(inputFieldSize),
-        "Tags"
+        new InputField(inputFieldSize), "Tags"
     ));
 
     BigView *ptr = this;
@@ -74,6 +74,36 @@ BigView<EventType>::BigView(const Vector2 &outOfViewPos, const Vector2 &inViewPo
     }
 
     m_button = new Button(m_currentPos, Vector2{inputFieldSize.x / 2.f, 50}, buttonText);
+    m_button->onClick.connect([this](){
+        this->sendEvent(); 
+    });
+}
+
+template <class EventType>
+BigView<EventType>::BigView(BigView<EventType>&& src) noexcept:
+    View(std::move(src.m_outOfViewPos), std::move(src.m_inViewPos), Settings::BIG_VIEW_SIZE),
+    m_inputGroups(std::move(src.m_inputGroups)),
+    m_button(std::move(src.m_button)), 
+    m_title(std::move(src.m_title)){
+    
+    Log::info("BigView move cstr");
+    m_localXAlignment = src.m_localXAlignment;
+    m_eventBus = src.m_eventBus;
+    src.m_button = nullptr;
+
+    // After moving, the src object will not have valid pointers,
+    // so we don't need to null out the pointers.
+    // All resources (like EventBus, InputGroups, and button) are now owned by the new object
+
+    // Reconnect signals with the moved inputGroups
+    BigView *ptr = this;
+    for (InputGroup *group : m_inputGroups) {
+        group->inputField->onSubmit.connect([ptr](){
+            ptr->sendEvent();
+        });
+    }
+
+    // Connect button click with sendEvent
     m_button->onClick.connect([this](){
         this->sendEvent(); 
     });
@@ -106,9 +136,15 @@ void BigView<EventType>::handleInput()
 template <class EventType>
 void BigView<EventType>::update(const float dt)
 {
+    Log::info("BigView update");
     View::update(dt);
 
+    Log::info("\tupdate inputGroups");
     for (InputGroup *group : m_inputGroups){
+        Log::info("inLoop");
+        if(group->inputField == nullptr){
+                Log::info("InputField nullptr");
+        }
         group->inputField->update(dt);
     }
 }
@@ -140,11 +176,16 @@ void BigView<EventType>::render() const
         group->inputField->render();
     }
 
+    Log::info("SetPos Button");
     float buttonSpacing = m_size.y * 0.05f;
     m_button->setPos(
         m_currentPos.x + (m_button->getSize().x / 2.f),
-        m_currentPos.y + nextYPos + buttonSpacing),
-        m_button->render();
+        m_currentPos.y + nextYPos + buttonSpacing);
+    
+    Log::info("Render Button");
+    m_button->render();
+
+    Log::info("Render complete");
 }
 
 template <class EventType>
