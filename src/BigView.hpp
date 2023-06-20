@@ -45,7 +45,6 @@ BigView<EventType>::BigView(const Vector2 &outOfViewPos, const Vector2 &inViewPo
     const std::string& title, const std::string& buttonText) : 
     View(outOfViewPos, inViewPos, Settings::BIG_VIEW_SIZE), m_eventBus(eventBus), m_inputGroups(3),
     m_title(title){
-    Log::info("BigView cstr");
     Vector2 inputFieldSize = {
         Settings::BIG_VIEW_SIZE.x * 0.9f,
         Settings::BIG_VIEW_SIZE.y * 0.05
@@ -82,11 +81,9 @@ BigView<EventType>::BigView(const Vector2 &outOfViewPos, const Vector2 &inViewPo
 template <class EventType>
 BigView<EventType>::BigView(BigView<EventType>&& src) noexcept:
     View(std::move(src.m_outOfViewPos), std::move(src.m_inViewPos), Settings::BIG_VIEW_SIZE),
-    m_inputGroups(std::move(src.m_inputGroups)),
-    m_button(std::move(src.m_button)), 
+    m_inputGroups(std::move(src.m_inputGroups)), m_button(std::move(src.m_button)), 
     m_title(std::move(src.m_title)){
-    
-    Log::info("BigView move cstr");
+
     m_localXAlignment = src.m_localXAlignment;
     m_eventBus = src.m_eventBus;
     src.m_button = nullptr;
@@ -94,7 +91,6 @@ BigView<EventType>::BigView(BigView<EventType>&& src) noexcept:
     // After moving, the src object will not have valid pointers,
     // so we don't need to null out the pointers.
     // All resources (like EventBus, InputGroups, and button) are now owned by the new object
-
     // Reconnect signals with the moved inputGroups
     BigView *ptr = this;
     for (InputGroup *group : m_inputGroups) {
@@ -102,7 +98,7 @@ BigView<EventType>::BigView(BigView<EventType>&& src) noexcept:
             ptr->sendEvent();
         });
     }
-
+    
     // Connect button click with sendEvent
     m_button->onClick.connect([this](){
         this->sendEvent(); 
@@ -136,15 +132,8 @@ void BigView<EventType>::handleInput()
 template <class EventType>
 void BigView<EventType>::update(const float dt)
 {
-    Log::info("BigView update");
     View::update(dt);
-
-    Log::info("\tupdate inputGroups");
     for (InputGroup *group : m_inputGroups){
-        Log::info("inLoop");
-        if(group->inputField == nullptr){
-                Log::info("InputField nullptr");
-        }
         group->inputField->update(dt);
     }
 }
@@ -176,22 +165,18 @@ void BigView<EventType>::render() const
         group->inputField->render();
     }
 
-    Log::info("SetPos Button");
     float buttonSpacing = m_size.y * 0.05f;
     m_button->setPos(
         m_currentPos.x + (m_button->getSize().x / 2.f),
         m_currentPos.y + nextYPos + buttonSpacing);
     
-    Log::info("Render Button");
-    m_button->render();
 
-    Log::info("Render complete");
+    m_button->render();
 }
 
 template <class EventType>
 void BigView<EventType>::sendEvent()
 {
-    Log::info("BigView, sendEvent");
     if (!allInputFieldHasValidInput())
     {  
         //todo handle error event inside method call instead
@@ -199,19 +184,16 @@ void BigView<EventType>::sendEvent()
         return;
     }
 
-    Log::info("\tcreate recipe");
     Recipe recipe;
     recipe.name = m_inputGroups[0]->inputField->getText();
     recipe.reference = m_inputGroups[1]->inputField->getText();
     recipe.tags = m_inputGroups[2]->inputField->getText();
 
-    Log::info("\tclearing input fields");
     for (InputGroup *group : m_inputGroups)
     {
         group->inputField->clear();
     }
-
-    Log::info("Sending event");
+    
     m_eventBus->fireEvent<EventType>(recipe);
 }
 

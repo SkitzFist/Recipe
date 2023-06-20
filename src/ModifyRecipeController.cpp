@@ -1,32 +1,31 @@
 #include "ModifyRecipeController.hpp"
 
-ModifyRecipeController::ModifyRecipeController(EventBus* eventBus, BigView<ModifyRecipePreparParameters>&& view) :
-    m_eventBus(eventBus), m_view(std::move(view)){
-    clearRecipe();
+ModifyRecipeController::ModifyRecipeController(EventBus* eventBus, BigView<ModifyRecipePreparParameters>* view) : 
+    m_eventBus(eventBus), m_view(view){
 
+    clearRecipe();
     m_eventBus->registerHandler<ModifyRecipePrepareId>(this);
     m_eventBus->registerHandler<ModifyRecipePreparParameters>(this);
 }
 
 ModifyRecipeController::~ModifyRecipeController(){
-
+    delete m_view;
 }
 
 void ModifyRecipeController::handleInput(){
-    m_view.handleInput();
+    m_view->handleInput();
 }
 
 void ModifyRecipeController::update(float dt){
-    m_view.update(dt);
+    m_view->update(dt);
 }
 
 void ModifyRecipeController::render() const{
-    Log::info("\tModifyRecipeController, render");
-    m_view.render();
+    m_view->render();
 }
 
 void ModifyRecipeController::show(){
-    m_view.show();
+    m_view->show();
 }
 
 void ModifyRecipeController::clearRecipe(){

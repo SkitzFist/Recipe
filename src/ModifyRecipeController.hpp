@@ -8,7 +8,7 @@ class ModifyRecipeController :
     public EventHandler<ModifyRecipePrepareId>, 
     public EventHandler<ModifyRecipePreparParameters>{
 public:
-    ModifyRecipeController(EventBus* eventBus, BigView<ModifyRecipePreparParameters>&& view);
+    ModifyRecipeController(EventBus* eventBus, BigView<ModifyRecipePreparParameters>* view);
     ~ModifyRecipeController();
 
     void handleInput();
@@ -20,7 +20,7 @@ public:
 private:
     Recipe m_recipe;
     EventBus* m_eventBus;
-    BigView<ModifyRecipePreparParameters> m_view;
+    BigView<ModifyRecipePreparParameters>* m_view;
 
     void clearRecipe();
     void sendEvent();

@@ -19,8 +19,31 @@ InputField::InputField(Vector2 size):
     m_textMarkerBox.pos.y = (m_pos.y + (m_size.y / 2.)) - (m_textMarkerBox.size.y / 2.f);
 }
 
-InputField::~InputField(){
+InputField::InputField(InputField&& src) noexcept:
+    m_pos(std::move(src.m_pos)), m_size(std::move(src.m_size)), m_text(std::move(src.m_text)), BLINK_TIME(std::move(src.BLINK_TIME)),
+    m_blinkTimer(std::move(src.m_blinkTimer)), m_carrotVisible(std::move(src.m_carrotVisible)), m_carrotPos(std::move(src.m_carrotPos)),
+    REMOVAL_COOLDOWN_START(std::move(src.REMOVAL_COOLDOWN_START)), m_removalTimer(std::move(src.m_removalTimer)), 
+    m_removalInProgress(std::move(src.m_removalInProgress)), m_removalElapsed(std::move(src.m_removalElapsed)), m_markTextInProgress(std::move(m_markTextInProgress)),
+    m_markTextStartPos(std::move(src.m_markTextStartPos)), m_markTextIndexes(std::move(src.m_markTextIndexes)){
+}
 
+InputField& InputField::operator=(const InputField&& other) noexcept{
+    m_pos = other.m_pos;
+    m_size = other.m_size;
+    m_isFocused = other.m_isFocused;
+    m_text = other.m_text;
+    m_blinkTimer = other.m_blinkTimer;
+    m_carrotVisible = other.m_carrotVisible;
+    m_carrotPos = other.m_carrotPos;
+    m_removalTimer = other.m_removalTimer;
+    m_removalInProgress = other.m_removalInProgress;
+    m_removalElapsed = other.m_removalElapsed;
+    m_markTextInProgress = other.m_markTextInProgress;
+    m_markTextIndexes = other.m_markTextIndexes;
+    return *this;
+}
+
+InputField::~InputField(){
 }
 
 void InputField::handleInput(){
@@ -246,7 +269,6 @@ void InputField::clearMarkText(){
 }
 
 void InputField::update(float dt){
-    Log::info("InputField Update");
     if(!m_removalInProgress && m_isFocused){
         updateCarrot(dt);   
     }

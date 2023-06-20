@@ -17,6 +17,8 @@ struct TextMarkerBox{
 class InputField{
 public:
     InputField(Vector2 size);
+    InputField(InputField&& src) noexcept;
+    InputField& operator=(const InputField&& other) noexcept;
     ~InputField();
     void handleInput();
     void update(float dt);
