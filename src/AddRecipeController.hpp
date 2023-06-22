@@ -6,10 +6,20 @@
 
 class AddRecipeController{
 public:
-    AddRecipeController(BigView<AddRecipeEvent> view);
+    AddRecipeController(EventBus* eventBus, BigView<AddRecipeEvent>* view);
+    ~AddRecipeController();
+    
+    void handleUpdate();
+    void update(float dt);
+    void render() const;
+
+    void show();
+    void hide();
 
 private:
-    BigView<AddRecipeEvent> m_view;
+    EventBus* m_eventBus;
+    BigView<AddRecipeEvent>* m_view;
+
 };
 
 #endif

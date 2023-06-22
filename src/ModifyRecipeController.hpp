@@ -16,6 +16,7 @@ public:
     void render() const;
 
     void show();
+    void hide();
     
 private:
     Recipe m_recipe;

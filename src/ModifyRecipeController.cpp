@@ -28,6 +28,10 @@ void ModifyRecipeController::show(){
     m_view->show();
 }
 
+void ModifyRecipeController::hide(){
+    m_view->hide();
+}
+
 void ModifyRecipeController::clearRecipe(){
     m_recipe.id = -1;
     m_recipe.name = "";
