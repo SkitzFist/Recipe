@@ -27,7 +27,7 @@ private:
 
     MessageController m_messageController;
     ModifyRecipeController m_modifyRecipeController;
-    //AddRecipeController m_addRecipeController;
+    AddRecipeController m_addRecipeController;
 };
 
 #endif

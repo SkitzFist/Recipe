@@ -20,7 +20,6 @@ InputField::InputField(Vector2 size):
 }
 
 InputField::~InputField(){
-
 }
 
 void InputField::handleInput(){
@@ -246,7 +245,6 @@ void InputField::clearMarkText(){
 }
 
 void InputField::update(float dt){
-    Log::info("InputField Update");
     if(!m_removalInProgress && m_isFocused){
         updateCarrot(dt);   
     }

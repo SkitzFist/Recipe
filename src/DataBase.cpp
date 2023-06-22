@@ -163,7 +163,7 @@ bool DataBase::executeSQL(const std::string& _query, int(*callback)(void*, int, 
 
 //addRecipe
 void DataBase::onEvent(const AddRecipeEvent& event){
-
+    
     insertRecipe(event.recipe);
 
     ///m_eventBus->fireEvent(AddRecipeCallback(insertRecipe(event.recipe)));
@@ -172,6 +172,9 @@ void DataBase::onEvent(const AddRecipeEvent& event){
 
 void DataBase::onEvent(const ModifyRecipeEvent& event){
     //todo searchBar should receive event first, so it can add recipe.ID 
+    if(event.recipe.id == -1){
+        return;
+    }
     modifyRecipe(event.recipe);
     //todo event callback;
 }

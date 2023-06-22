@@ -1,11 +1,8 @@
 #include "Button.hpp"
 
-//debug
-#include "Log.hpp"
 
 Button::Button(Vector2 pos, Vector2 size, const std::string& text): 
    m_pos(pos), m_size(size), m_text(text), m_isHovering(false){
-    Log::info("Button cstr");
     m_fontSize = GetFontDefault().baseSize * 4.f;
     Vector2 textSize = MeasureTextEx(GetFontDefault(), m_text.c_str(), m_fontSize, 2.f);
 
@@ -20,12 +17,10 @@ Button::Button(Vector2 pos, Vector2 size, const std::string& text):
 
 Button::Button(Button&& src) noexcept:
     m_pos(std::move(src.m_pos)), m_size(std::move(src.m_size)), m_text(std::move(src.m_text)), m_isHovering(false){
-    Log::info("Button move");
     
 }
 
 Button& Button::operator=(const Button&& other) noexcept{
-    Log::info("Button Move Operator");
     m_fontSize = other.m_fontSize;
     m_isHovering = other.m_isHovering;
     m_pos = other.m_pos;
@@ -37,7 +32,6 @@ Button& Button::operator=(const Button&& other) noexcept{
 
 
 Button::~Button(){
-    Log::info("Button dstr");
 }
 
 void Button::handleInput(){
